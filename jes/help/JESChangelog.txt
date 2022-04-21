@@ -3,6 +3,28 @@ JES Changelog
 This changelog only covers changes in JES versions 5.0 and later.
 Our records of what changed in version 4.3 and earlier are fragmentary.
 
+JES 7.0-Beta-1
+--------------
+Release Date: April 21, 2022
+
+Contributor: Jared Schoeny
+
+Lots of new quality-of-life features, miscellaneous bug fixes, and other minor improvements
+
+Implemented FlatLaf themes
+
+## Editor Improvements
+*   Added dark mode
+*   Improved visuals
+*   Updated the color scheme of the editor.
+    More keywords are now highlighted, including numbers and some symbols.
+*   Improved undo/redo functionality
+*   Improved auto-indenting functionality
+*   Selections can now be indented and commented collectively
+*   Added basic autocompletion
+*   Improved keyword helper functionality
+*   Other minor quality-of-life features
+
 JES 6.00
 --------
 Release Date: December, 4th, 2019
