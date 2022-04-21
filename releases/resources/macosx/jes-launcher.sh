@@ -193,6 +193,6 @@ exec "$JAVA" \
     -Dpython.path="$PYTHONPATH" \
     -Dpython.cachedir="$PYTHONCACHE" \
     -Dapple.laf.useScreenMenuBar=true \
+    -Dapple.awt.application.appearance=system \
     ${JES_JAVA_MEMORY:--Xmx1024m} ${JES_JAVA_OPTIONS} \
     JESstartup "$@"
-
