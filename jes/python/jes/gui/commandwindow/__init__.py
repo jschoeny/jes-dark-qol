@@ -21,11 +21,12 @@ class CommandWindowController(object):
     """
     Encapsulates the command window GUI, editing logic, and history.
     """
-    def __init__(self):
+    def __init__(self, gui):
         self._history = CommandHistory()
         self._document = CommandDocument(self._history)
         self._textpane = CommandWindowPane(self, self._document)
         self._callback = None
+        self._gui = gui
         promptService.setCommandWindow(self)
 
     def getTextPane(self):
@@ -162,4 +163,3 @@ class CommandWindowController(object):
             self._textpane.setCaretPosition(newPosition)
         else:
             self._textpane.setCaretPosition(length)
-

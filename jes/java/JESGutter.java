@@ -16,6 +16,11 @@ import java.util.regex.*;
  * marking, and demarcates def statements.
  */
 public class JESGutter extends JComponent implements DocumentListener {
+    private static final Color TEXT_COLOR = new Color(165, 169, 178);
+    private static final Color TEXT_OFF_COLOR = new Color(87, 92, 94);
+    private static final Color HIGHLIGHT_COLOR = new Color(255, 255, 255, 15);
+    private static final Color HIGHLIGHT_COLOR_L = new Color(0, 0, 0, 12);
+    private static final Color BACKGROUND_COLOR = new Color(35, 37, 38);
     /* Line indention levels */
     private Vector indents = new Vector();
 
@@ -46,6 +51,11 @@ public class JESGutter extends JComponent implements DocumentListener {
     /*Line mark */
     private int lineMark = -1;
 
+    /*Dark mode*/
+    private boolean darkMode = false;
+
+    private boolean isFocused = false;
+
     private static final long serialVersionUID = 7526471155622776147L;
 
     /**
@@ -58,6 +68,17 @@ public class JESGutter extends JComponent implements DocumentListener {
         text.getDocument().addDocumentListener(this);
         editorFont = f;
         lineHeight = editorFont.getSize2D();
+    }
+
+
+    public void setDarkMode(boolean enable) {
+        darkMode = enable;
+        if(enable) {
+            setBackground(BACKGROUND_COLOR);
+        }
+        else {
+            setBackground(null);
+        }
     }
 
 
@@ -106,7 +127,15 @@ public class JESGutter extends JComponent implements DocumentListener {
      * Paints gutter information to the graphics object
      */
     public void paint(Graphics g) {
+        if(darkMode) {
+            g.setColor(BACKGROUND_COLOR);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+
+        int offset = text.getCaretPosition();
+
         Element root = text.getDocument().getDefaultRootElement();
+        int cursorIndex = root.getElementIndex(offset);
         int count = root.getElementCount();
         Rectangle clip = g.getClipBounds();
         Point topClip = new Point(0, clip.y);
@@ -126,13 +155,62 @@ public class JESGutter extends JComponent implements DocumentListener {
         } catch (Exception e) {
             bottom = count;
         }
+        int selIndexStart = -1;
+        int selIndexEnd = -1;
+        if (text.getSelectedText() != null) {
+            selIndexStart = root.getElementIndex(text.getSelectionStart());
+            selIndexEnd = root.getElementIndex(text.getSelectionEnd());
+            try {
+                int startChar = root.getElement(selIndexStart).getStartOffset();
+                int endChar = root.getElement(selIndexEnd).getStartOffset();
+                Rectangle tR = text.modelToView(startChar);
+                Rectangle bR = text.modelToView(endChar);
+                if(darkMode) {
+                    g.setColor(HIGHLIGHT_COLOR);
+                }
+                else {
+                    g.setColor(HIGHLIGHT_COLOR_L);
+                }
+                g.fillRect(0, tR.y - 1, getWidth(), (bR.y - tR.y) + bR.height + 2);
+            } catch (Exception e) {
+                // Do nothing
+            }
+        }
         for (int i = start; i <= bottom; i++) {
             try {
                 int startChar = root.getElement(i).getStartOffset();
+                Rectangle tR = text.modelToView(startChar);
+                if (i == cursorIndex && text.getSelectedText() == null) {
+                    if(darkMode) {
+                        g.setColor(HIGHLIGHT_COLOR);
+                    }
+                    else {
+                        g.setColor(HIGHLIGHT_COLOR_L);
+                    }
+                    g.fillRect(0, tR.y - 1, getWidth(), tR.height + 2);
+                }
+                if(darkMode) {
+                    g.setColor(TEXT_OFF_COLOR);
+                }
+                else {
+                    g.setColor(Color.darkGray);
+                }
                 if ((i + 1) == lineMark) {
                     g.setColor(Color.green);
                 }
-                g.drawString((new Integer(i + 1)).toString(), 3, text.modelToView(startChar).y + 10);
+                else if ((i == cursorIndex && text.getSelectedText() == null)
+                    || (i >= selIndexStart && i <= selIndexEnd)) {
+                        if(darkMode) {
+                            g.setColor(TEXT_COLOR);
+                        }
+                        else {
+                            g.setColor(Color.black);
+                        }
+                }
+                FontMetrics fm = getFontMetrics(gutterFont);
+                int fHeight = fm.getHeight();
+                int yPos = tR.y + (tR.height / 2) + (fHeight / 2);
+                g.drawString((new Integer(i + 1)).toString(), 3, yPos);
                 if ((i + 1) == lineMark) {
                     g.setColor(Color.black);
                 }
@@ -141,6 +219,20 @@ public class JESGutter extends JComponent implements DocumentListener {
             }
         }
         super.paint(g);
+        if(!isFocused) {
+            if(darkMode) {
+                g.setColor(new Color(0, 0, 0, 70));
+            }
+            else {
+                g.setColor(new Color(0, 0, 0, 40));
+            }
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+    }
+
+    public void setFocused(boolean enable) {
+        isFocused = enable;
+        repaint();
     }
 
 

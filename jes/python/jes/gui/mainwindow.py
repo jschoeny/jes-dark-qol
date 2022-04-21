@@ -50,6 +50,8 @@ from jes.gui.explorers import Explorers
 from jes.gui.helpinfo import buildJESFunctionsMenu, buildJavaAPIMenu
 from jes.gui.plugins import PluginActions
 
+import com.formdev.flatlaf.FlatLaf as FlatLaf
+
 
 MENU_SEPARATOR = '-'
 EXPLAIN_PREFIX = 'Explain '
@@ -59,6 +61,8 @@ COMMAND_COPY = 'Copy'
 COMMAND_PASTE = 'Paste'
 COMMAND_UNDO = 'Undo'
 COMMAND_REDO = 'Redo'
+COMMAND_DEC_INDENT = 'Decrease Indent'
+COMMAND_COMMENT = 'Toggle Comment'
 COMMAND_GOTO = 'Goto Line ...'
 COMMAND_OPTIONS = 'Options'
 #COMMAND_DIRECTORY = 'Change Default Directory...'
@@ -93,10 +97,18 @@ SKINS_TITLE = 'Skins'
 HELP_START_PAGE = 'http://coweb.cc.gatech.edu/mediaComp-teach/25'
 HELP_FILE_EXTENTION = '.html'
 
+SHIFT_KEY = Event.SHIFT_MASK
+
+UNDO_CONTROL_KEY = Event.META_MASK
+REDO_KEY = KeyEvent.VK_Y
 if System.getProperty('os.name').find('Mac') <> -1:  # if we are on a Mac
     CONTROL_KEY = Event.META_MASK
+    UNDO_CONTROL_KEY = CONTROL_KEY | SHIFT_KEY
+    REDO_KEY = KeyEvent.VK_Z
 else:
     CONTROL_KEY = Event.CTRL_MASK
+    UNDO_CONTROL_KEY = CONTROL_KEY
+
 
 # The following is an array that is used to build the main menu bar.  The
 # information stored in here is the high level menu item names, the menu bar
@@ -106,8 +118,10 @@ APPLICATION_TITLE = JESVersion.FULL_TITLE + ' - %s'
 INITIAL_WINDOW_SIZE = (1000, 600)
 
 LOAD_BUTTON_CAPTION = 'Load Program'
+SAVE_BUTTON_CAPTION = 'Save'
 SHOW_DEBUGGER_CAPTION = 'Watcher'
 HIDE_DEBUGGER_CAPTION = 'Watcher'
+CLEAR_CONSOLE_CAPTION = 'Clear'
 UNTITLED_FILE_NAME = 'Untitled'
 HELP_URL = ''
 LOAD_STATUS_CURRENT = ''
@@ -125,6 +139,8 @@ STATUS_BAR_HEIGHT = 30
 PROMPT_LOAD_MESSAGE = 'You must save the file that you are working\non before loading it.'
 
 PROMPT_EXIT_MESSAGE = 'If you exit JES, your changes will be lost.'
+
+BACKGROUND_COLOR = awt.Color(41, 44, 51)
 
 
 class JESUI(swing.JFrame, FocusListener):
@@ -144,6 +160,7 @@ class JESUI(swing.JFrame, FocusListener):
         self.program = program
         self.size = INITIAL_WINDOW_SIZE
         self.windowClosing = self.exit
+        self.darkModeSkin = False
 
         self.setLocationRelativeTo(None)
 
@@ -166,7 +183,7 @@ class JESUI(swing.JFrame, FocusListener):
         self.editor = JESEditor(self)
         self.trackEditorFocus(self.editor)
 
-        self.commandWindow = CommandWindowController()
+        self.commandWindow = CommandWindowController(self)
         self.trackEditorFocus(self.commandWindow.getTextPane())
         self.commandWindow.setTheme(JESConfig.getInstance().getStringProperty(
             JESConfig.CONFIG_COMMAND_WINDOW_THEME
@@ -177,7 +194,11 @@ class JESUI(swing.JFrame, FocusListener):
         self.loadButton.enabled = 0
         self.loadStatus = swing.JLabel()
 
+        self.saveButton = swing.JButton(SAVE_BUTTON_CAPTION, actionPerformed=self.actionPerformed)
+        self.saveButton.enabled = 1
+
         self.stopButton = swing.JButton(self.program.interpreter.stopAction)
+        self.clearConsoleButton = swing.JButton(CLEAR_CONSOLE_CAPTION, actionPerformed=self.actionPerformed)
         self.debuggerButton = swing.JButton(self.program.interpreter.toggleDebuggerAction)
 
         self.cursorStatusLabel = swing.JLabel()
@@ -198,6 +219,7 @@ class JESUI(swing.JFrame, FocusListener):
         self.gutter = JESGutter(self.editor, self.editor.getFont())
         self.gutter.setPreferredSize(awt.Dimension(25, 300))
         self.gutter.setBorder(swing.BorderFactory.createEtchedBorder())
+        self.gutter.setDarkMode(JESConfig.getInstance().getBooleanProperty(JESConfig.CONFIG_DARK))
         if JESConfig.getInstance().getBooleanProperty(JESConfig.CONFIG_GUTTER):
             self.docpane.add(self.gutter)
         self.docpane.add(self.editor)
@@ -323,9 +345,11 @@ class JESUI(swing.JFrame, FocusListener):
         # eastBar.setMaximumSize(awt.Dimension(Short.MAX_VALUE,
         #                                    BUTTON_PANE_HEIGHT))
         eastBar.add(self.debuggerButton)
+        eastBar.add(self.clearConsoleButton)
         eastBar.add(self.stopButton)
         eastBar.add(self.runningBar)
         westBar = swing.JPanel()
+        westBar.add(self.saveButton)
         westBar.add(self.loadButton)
         westBar.add(self.loadStatus)
 
@@ -339,6 +363,7 @@ class JESUI(swing.JFrame, FocusListener):
 
         self.explainButton = swing.JButton(COMMAND_EXPLORE_HELP,
                                            actionPerformed=self.actionPerformed)
+        self.explainButton.enabled = False
 
         cursorAndName = swing.JPanel()
         cursorAndName.add(self.explainButton)
@@ -404,10 +429,13 @@ class JESUI(swing.JFrame, FocusListener):
                 self.commandWindow.clearScreen,
                 MENU_SEPARATOR,
                 [COMMAND_UNDO,      KeyEvent.VK_Z,      CONTROL_KEY],
-                [COMMAND_REDO,      KeyEvent.VK_Y,      CONTROL_KEY],
+                [COMMAND_REDO,      REDO_KEY,           UNDO_CONTROL_KEY],
                 [COMMAND_CUT,       KeyEvent.VK_X,      CONTROL_KEY],
                 [COMMAND_COPY,      KeyEvent.VK_C,      CONTROL_KEY],
                 [COMMAND_PASTE,     KeyEvent.VK_V,      CONTROL_KEY],
+                MENU_SEPARATOR,
+                [COMMAND_DEC_INDENT,KeyEvent.VK_TAB,    SHIFT_KEY],
+                [COMMAND_COMMENT,   KeyEvent.VK_SLASH,  CONTROL_KEY],
                 MENU_SEPARATOR,
                 [COMMAND_GOTO,      KeyEvent.VK_G,      CONTROL_KEY],
                 [COMMAND_SEARCH,    KeyEvent.VK_F,      CONTROL_KEY],
@@ -503,9 +531,18 @@ class JESUI(swing.JFrame, FocusListener):
             box = event.getSource()
             actionCommand = str(box.getSelectedItem())
 
+        self.darkModeSkin = False
         for skin in UIManager.getInstalledLookAndFeels():
             if str(skin.getName()) == actionCommand:
                 UIManager.setLookAndFeel(skin.getClassName())
+                if str(skin.getName()) in ["FlatLaf Dark", "FlatLaf Darcula"]:
+                    self.editor.setDarkMode(True)
+                    self.gutter.setDarkMode(True)
+                    self.darkModeSkin = True
+                else:
+                    if not JESConfig.getInstance().getBooleanProperty(JESConfig.CONFIG_DARK):
+                        self.editor.setDarkMode(False)
+                        self.gutter.setDarkMode(False)
 
                 # This prevents the GTK+ Slider from showing the integer
                 # speed value over itself on the watcher control pnael.
@@ -558,6 +595,10 @@ class JESUI(swing.JFrame, FocusListener):
             self.undo()
         elif actionCommand == COMMAND_REDO:
             self.redo()
+        elif actionCommand == COMMAND_DEC_INDENT:
+            self.decreaseIndent()
+        elif actionCommand == COMMAND_COMMENT:
+            self.toggleComment()
         elif actionCommand == COMMAND_GOTO:
             self.getGoToLineNum()
         elif actionCommand == COMMAND_SEARCH:
@@ -572,16 +613,27 @@ class JESUI(swing.JFrame, FocusListener):
         elif (actionCommand == LOAD_BUTTON_CAPTION) or (actionCommand == COMMAND_LOAD):
             if self.editor.modified:
                 if JESConfig.getInstance().getBooleanProperty(JESConfig.CONFIG_AUTOSAVEONRUN):
-                    self.program.fileManager.saveAction()
+                    if self.program.fileManager.saveAction():
+                        self.saveButton.enabled = 0
                     self.editor.document.removeErrorHighlighting()
                     self.program.loadFile()
                 elif self.program.fileManager.continueAfterSaving(PROMPT_LOAD_MESSAGE):
                     self.editor.document.removeErrorHighlighting()
                     self.program.loadFile()
+            elif len(self.editor.getText()) == 0:
+                swing.JOptionPane.showMessageDialog(self, "An empty file cannot be loaded.", "File empty",
+                                                    swing.JOptionPane.ERROR_MESSAGE)
             else:
                 self.program.loadFile()
+                self.saveButton.enabled = 0
+        elif actionCommand == SAVE_BUTTON_CAPTION:
+            if self.editor.modified or self.editor.document.getLength() == 0:
+                if self.program.fileManager.saveAction():
+                    self.saveButton.enabled = 0
         elif actionCommand == SHOW_DEBUGGER_CAPTION or actionCommand == HIDE_DEBUGGER_CAPTION:
             self.program.interpreter.toggleDebugMode()
+        elif actionCommand == CLEAR_CONSOLE_CAPTION:
+            self.commandWindow.clearScreen()
         elif actionCommand == COMMAND_EDITOR:
             self.editor.requestFocus()
         elif actionCommand == COMMAND_COMMAND:
@@ -753,6 +805,8 @@ class JESUI(swing.JFrame, FocusListener):
     def setRunning(self, runBool):
         self.running = runBool
         self.loadButton.enabled = not runBool
+        if runBool:
+            self.saveButton.enabled = False
 
         if runBool:
             cursor = awt.Cursor(awt.Cursor.DEFAULT_CURSOR)
@@ -850,6 +904,20 @@ class JESUI(swing.JFrame, FocusListener):
         if isinstance(focusedComponent, swing.JTextPane):
             focusedComponent.redo()
 
+
+
+    def decreaseIndent(self):
+        focusedComponent = self.focusedEditor
+
+        if isinstance(focusedComponent, swing.JTextPane):
+            focusedComponent.decreaseIndent()
+
+    def toggleComment(self):
+        focusedComponent = self.focusedEditor
+
+        if isinstance(focusedComponent, swing.JTextPane):
+            focusedComponent.toggleComment()
+
 ##########################################################################
 # Function name: UpdateRowCol
 # Parameters:
@@ -859,11 +927,12 @@ class JESUI(swing.JFrame, FocusListener):
 #     Updates the status bar with the given row and column.
 ##########################################################################
     def UpdateRowCol(self, row, col):
-        self.cursorStatusLabel.text = 'Line Number:' + \
-            str(col) + ' Position: ' + str(row)
-        self.cursorStatusLabel.setForeground(awt.Color.black)
+        self.cursorStatusLabel.text = 'Line Number: ' + \
+            (' ' * max(0, 3 - len(str(col)))) + str(col) + ' Position: ' + \
+            (' ' * max(0, 3 - len(str(row)))) + str(row)
+        self.cursorStatusLabel.setForeground(awt.Color(127, 127, 127))
 
-    def UpdateToolbarHelp(self, keyword):
+    def UpdateToolbarHelp(self, keyword, argNum=-1):
         search_str = string.strip(keyword)
         msg = ''
         for entry in self.helplist:
@@ -873,17 +942,48 @@ class JESUI(swing.JFrame, FocusListener):
 
         if not msg == '':
             msg = re.sub('<(?!(?:a\s|/a|!))[^>]*>', '', msg)
+            # Find argument number of cursor position and make it bold
+            if argNum >= 0:
+                search = msg.find('(')
+                argPos = []
+                if ',' in msg:
+                    argPos.append(search)
+                    while search < len(msg):
+                        if msg[search] == ',':
+                            if msg[search-1] == '[':
+                                argPos.append(search-1)
+                            else:
+                                argPos.append(search)
+                        elif msg[search] == ')':
+                            if msg[search-1] == ']':
+                                argPos.append(search-1)
+                            else:
+                                argPos.append(search)
+                            break
+                        search += 1
+                elif msg.find(')') - search > 1:
+                    argPos.append(search)
+                    argPos.append(msg.find(')'))
+                if len(argPos) > argNum + 1:
+                    start = argPos[argNum]
+                    end = argPos[argNum+1]
+                    msg = "<html>" + msg[:start+1] + "<b>" + msg[start+1:end] + "</b>" + msg[end:]
+
             if msg.find(':') == -1:
                 self.docLabel.text = str(msg)
             else:
                 self.docLabel.text = str(msg[:msg.find(':')])
-            self.cursorStatusLabel.setForeground(awt.Color.black)
+            self.cursorStatusLabel.setForeground(awt.Color(127, 127, 127))
             self.explainButton.text = 'Explain ' + search_str
+            self.explainButton.enabled = True
+            return True
 
         else:
             self.docLabel.text = str(EXPLAIN_DEFAULT_STATUS)
-            self.cursorStatusLabel.setForeground(awt.Color.black)
+            self.cursorStatusLabel.setForeground(awt.Color(127, 127, 127))
             self.explainButton.text = COMMAND_EXPLORE_HELP
+            self.explainButton.enabled = False
+            return False
 
 ##########################################################################
 # Function name: SetHelpFiles
@@ -1006,10 +1106,14 @@ class JESUI(swing.JFrame, FocusListener):
     #     Opens up the options frame
     ##########################################################################
     def openOptions(self):
-        self.optionsWindow = swing.JFrame('JES Options')
+        frame = swing.JFrame('JES Options')
+        self.optionsWindow = swing.JDialog(frame)
+        panel = swing.JPanel()
+        panel.setBorder(swing.BorderFactory.createEmptyBorder(20, 20, 20, 20))
+        panel.setLayout(awt.GridLayout(15, 2, 15, 0))
 
-        self.optionsWindow.contentPane.layout = awt.GridLayout(10, 2)
-        #self.optionsWindow.size = (350,550)
+        # self.optionsWindow.contentPane.layout = awt.GridLayout(11, 2)
+        # self.optionsWindow.size = (350,550)
 
         donebutton = swing.JButton("Done", preferredSize=(100, 20),
                                    actionPerformed=self.optionsButtonPressed)
@@ -1021,6 +1125,8 @@ class JESUI(swing.JFrame, FocusListener):
                                  (JESConfig.FONT_SIZE_MIN, JESConfig.FONT_SIZE_MAX))
         gutterlabel = swing.JLabel("Show line numbers:")
         blocklabel = swing.JLabel("Show indentation help:")
+        autocompleteLabel = swing.JLabel("Autocomplete common keywords:")
+        darklabel = swing.JLabel("Force editor dark mode:")
         autosavelabel = swing.JLabel("Automatically save before loading:")
         backupsavelabel = swing.JLabel("Save a backup copy on save:")
         wrappixellabel = swing.JLabel(
@@ -1039,6 +1145,10 @@ class JESUI(swing.JFrame, FocusListener):
         # alexr flopped the sense of this checkbox
         self.blockBox = swing.JCheckBox(
             "", not JESConfig.getInstance().getBooleanProperty(JESConfig.CONFIG_BLOCK))
+        self.autocompleteBox = swing.JCheckBox(
+            "", JESConfig.getInstance().getBooleanProperty(JESConfig.CONFIG_AUTOCOMPLETE))
+        self.darkBox = swing.JCheckBox(
+            "", JESConfig.getInstance().getBooleanProperty(JESConfig.CONFIG_DARK))
 
         if JESConfig.getInstance().getStringProperty(JESConfig.CONFIG_MODE) == JESConfig.MODE_BEGINNER:
             modes = [JESConfig.MODE_BEGINNER, JESConfig.MODE_EXPERT]
@@ -1075,39 +1185,61 @@ class JESUI(swing.JFrame, FocusListener):
                 JESConfig.CONFIG_COMMAND_WINDOW_THEME
             ))
 
-        self.optionsWindow.contentPane.add(modelabel)
-        self.optionsWindow.contentPane.add(self.userExperienceField)
-        self.optionsWindow.contentPane.add(fontlabel)
-        self.optionsWindow.contentPane.add(self.userFontField)
-        self.optionsWindow.contentPane.add(gutterlabel)
-        self.optionsWindow.contentPane.add(self.gutterBox)
-        self.optionsWindow.contentPane.add(blocklabel)
-        self.optionsWindow.contentPane.add(self.blockBox)
+        panel.add(modelabel)
+        panel.add(self.userExperienceField)
 
-        self.optionsWindow.contentPane.add(autosavelabel)
-        self.optionsWindow.contentPane.add(self.autosaveBox)
+        panel.add(swing.JLabel())
+        panel.add(swing.JLabel())
 
-        self.optionsWindow.contentPane.add(backupsavelabel)
-        self.optionsWindow.contentPane.add(self.backupSaveBox)
+        panel.add(fontlabel)
+        panel.add(self.userFontField)
+        panel.add(gutterlabel)
+        panel.add(self.gutterBox)
+        panel.add(blocklabel)
+        panel.add(self.blockBox)
+        panel.add(autocompleteLabel)
+        panel.add(self.autocompleteBox)
+
+        panel.add(autosavelabel)
+        panel.add(self.autosaveBox)
+
+        panel.add(backupsavelabel)
+        panel.add(self.backupSaveBox)
         # self.optionsWindow.contentPane.add(self.autoopenBox)
 
-        self.optionsWindow.contentPane.add(wrappixellabel)
-        self.optionsWindow.contentPane.add(self.wrappixelBox)
+        panel.add(wrappixellabel)
+        panel.add(self.wrappixelBox)
 
-        self.optionsWindow.contentPane.add(skinlabel)
-        self.optionsWindow.contentPane.add(self.skinField)
+        panel.add(swing.JLabel())
+        panel.add(swing.JLabel())
 
-        self.optionsWindow.contentPane.add(cmdWindowThemeLabel)
-        self.optionsWindow.contentPane.add(self.cmdWindowThemeField)
+        panel.add(skinlabel)
+        panel.add(self.skinField)
 
-        self.optionsWindow.contentPane.add(cancelbutton)
-        self.optionsWindow.contentPane.add(donebutton)
+        panel.add(darklabel)
+        panel.add(self.darkBox)
+
+        panel.add(cmdWindowThemeLabel)
+        panel.add(self.cmdWindowThemeField)
+
+        panel.add(swing.JLabel())
+        panel.add(swing.JLabel())
+
+        panel.add(cancelbutton)
+        panel.add(donebutton)
+
+        self.optionsWindow.contentPane.add(panel)
 
         #self.optionsWindow.size = (400,400)
         self.optionsWindow.pack()
         self.optionsWindow.setLocationRelativeTo(None)
+        self.optionsWindow.setModal(True)
+        self.optionsWindow.setAlwaysOnTop(True)
+        self.optionsWindow.setModalityType(awt.Dialog.ModalityType.APPLICATION_MODAL)
 
         self.optionsWindow.show()
+
+        self.editor.focusGained(None)
 
     def optionsButtonPressed(self, event):
         if event.source.text == 'Done':
@@ -1140,6 +1272,10 @@ class JESUI(swing.JFrame, FocusListener):
                 JESConfig.CONFIG_BACKUPSAVE, self.backupSaveBox.isSelected())
             JESConfig.getInstance().setBooleanProperty(
                 JESConfig.CONFIG_WRAPPIXELVALUES, self.wrappixelBox.isSelected())
+            JESConfig.getInstance().setBooleanProperty(
+                JESConfig.CONFIG_DARK, self.darkBox.isSelected())
+            JESConfig.getInstance().setBooleanProperty(
+                JESConfig.CONFIG_AUTOCOMPLETE, self.autocompleteBox.isSelected())
             Pixel.setWrapLevels(self.wrappixelBox.isSelected())
 
             JESConfig.getInstance().writeConfig()
@@ -1152,6 +1288,7 @@ class JESUI(swing.JFrame, FocusListener):
 
             if JESConfig.getInstance().getBooleanProperty(JESConfig.CONFIG_BLOCK):
                 self.editor.removeBox()
+                self.editor.indentLines = []
             else:
                 self.editor.addBox()
 
@@ -1159,6 +1296,17 @@ class JESUI(swing.JFrame, FocusListener):
                 self.turnOnGutter()
             else:
                 self.turnOffGutter()
+
+            if JESConfig.getInstance().getBooleanProperty(JESConfig.CONFIG_DARK):
+                self.editor.setDarkMode(1)
+                self.gutter.setDarkMode(1)
+                self.docpane.repaint()
+            elif not self.darkModeSkin:
+                self.editor.setDarkMode(0)
+                self.gutter.setDarkMode(0)
+                self.docpane.repaint()
+
+            self.editor.calculateLines()
 
         else:
             self.optionsWindow.dispose()
@@ -1355,4 +1503,3 @@ class hideRight(swing.JPanel):
         hideRight.actionPerformed = actionPerformed
         self.setLayout(awt.FlowLayout(awt.FlowLayout.TRAILING, 1, 1))
         self.add(hideRight)
-

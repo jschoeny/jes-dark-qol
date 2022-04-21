@@ -34,6 +34,7 @@ PROMPT_PRINT_MESSAGE = 'You must save the file that you are working\non before p
 class FileManager(object):
     def __init__(self):
         self.filename = None
+        self.pendingContinueAfterSavingOrDiscarding = False
 
         self.parentWindow = None
         self.editor = None
@@ -75,7 +76,10 @@ class FileManager(object):
     @threadsafe
     def saveAction(self):
         if self.filename is not None:
-            return self.writeFile(self.filename)
+            isSaved = self.writeFile(self.filename)
+            if isSaved:
+                self.editor.lastSavedText = self.editor.getText()
+            return isSaved
         else:
             return self.saveAsAction()
 
@@ -84,7 +88,8 @@ class FileManager(object):
     def saveAsAction(self):
         targetFile = self.selectProgramToSave()
         if targetFile is not None:
-            self.writeFile(targetFile)
+            if self.writeFile(targetFile):
+                self.editor.lastSavedText = self.editor.getText()
 
     @threadsafe
     def readAction(self, filename):
@@ -131,13 +136,16 @@ class FileManager(object):
             self.lastDirectory = os.path.dirname(filename)
 
             self.editor.modified = 0
+            self.editor.document.undoManager.discardAllEdits()
+            self.editor.gui.saveButton.enabled = 0
 
             self.onRead.send(self, filename=filename)
 
     @threadsafe
     def writeFile(self, filename):
         filename = os.path.abspath(os.path.normpath(filename))
-        sourceText = self.editor.getText().encode('utf8')
+        sourceText = self.editor.getText()
+        sourceText = sourceText.encode('utf8')
         sourceText = sourceText.replace("\r\n","\n") # Deal with Windows file endings
 
         try:
@@ -152,6 +160,7 @@ class FileManager(object):
             self.lastDirectory = os.path.dirname(filename)
 
             self.editor.modified = 0
+            self.editor.gui.saveButton.enabled = 0
 
             self.onWrite.send(self, filename=filename)
 
@@ -231,11 +240,15 @@ class FileManager(object):
     @threadsafe
     def continueAfterSavingOrDiscarding(self, prompt):
         if self.editor.modified:
+            if self.pendingContinueAfterSavingOrDiscarding:
+                return False
+            self.pendingContinueAfterSavingOrDiscarding = True
             promptResult = JOptionPane.showConfirmDialog(self.parentWindow,
                 prompt + '\n' + PROMPT_SAVE_OR_DISCARD,
                 PROMPT_SAVE_CAPTION, JOptionPane.YES_NO_CANCEL_OPTION
             )
 
+            self.pendingContinueAfterSavingOrDiscarding = False
             if promptResult == JOptionPane.YES_OPTION:
                 isSaved = self.saveAction()
                 if isSaved:
@@ -286,4 +299,3 @@ class FileManager(object):
             self.parentWindow, message,
             "Confirm Save", JOptionPane.YES_NO_OPTION
         ) == JOptionPane.YES_OPTION
-

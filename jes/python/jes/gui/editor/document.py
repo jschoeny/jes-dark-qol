@@ -20,6 +20,7 @@ This is a special document class used by JESEditor.
 import JESConfig
 import java.awt as awt
 import javax.swing as swing
+import java.time as time
 import HighlightingStyledDocument as HighlightingStyledDocument
 import keyword
 import string
@@ -32,6 +33,7 @@ KEYWORD_BOLD = 1
 INVALID_PAREN_BOLD = 1
 INSERT_EVENT = 1
 REMOVE_EVENT = 2
+REPLACE_EVENT = 3
 MAX_UNDO_EVENTS_TO_RETAIN = 500
 
 ERROR_LINE_FONT_COLOR = awt.Color.black
@@ -39,12 +41,39 @@ ERROR_LINE_BACKGROUND_COLOR = awt.Color.yellow
 HIGHLIGHT_LINE_FONT_COLOR = awt.Color.black
 HIGHLIGHT_LINE_BACKGROUND_COLOR = awt.Color.green
 
-KEYWORD_COLOR = awt.Color(50, 50, 150)
-ENVIRONMENT_WORD_COLOR = awt.Color(150, 50, 150)
-COMMENT_COLOR = awt.Color(50, 120, 50)
-STRING_COLOR = awt.Color(150, 90, 90)
-LPAREN_COLOR = awt.Color(150, 0, 0)
-RPAREN_COLOR = awt.Color(150, 0, 0)
+# DARK MODE
+TEXT_COLOR = awt.Color(213, 218, 230)
+KEYWORD_COLOR = awt.Color(187, 124, 215)
+ENVIRONMENT_WORD_COLOR = awt.Color(116, 173, 233)
+COMMENT_COLOR = awt.Color(93, 99, 111)
+STRING_COLOR = awt.Color(161, 194, 129)
+LPAREN_COLOR = awt.Color(209, 114, 119)
+RPAREN_COLOR = LPAREN_COLOR
+NUMBER_COLOR = awt.Color(201, 156, 110)
+MATCH_COLOR = awt.Color(224, 209, 67)
+
+# LIGHT MODE
+TEXT_COLOR_L = awt.Color.black
+KEYWORD_COLOR_L = awt.Color(50, 50, 150)
+ENVIRONMENT_WORD_COLOR_L = awt.Color(150, 50, 150)
+COMMENT_COLOR_L = awt.Color(50, 120, 50)
+STRING_COLOR_L = awt.Color(90, 150, 90)
+LPAREN_COLOR_L = awt.Color(150, 0, 0)
+RPAREN_COLOR_L = LPAREN_COLOR_L
+NUMBER_COLOR_L = awt.Color(150, 90, 90)
+MATCH_COLOR_L = awt.Color(200, 200, 50)
+
+MATCH_BACK_COLOR = awt.Color(50, 120, 250, 127)
+BACKGROUND_COLOR = awt.Color(41, 44, 51, 0)
+
+
+class JESUndoManager(swing.undo.UndoManager):
+
+    def redo(self):
+        edit = self.lastEdit()
+        if not edit.isSignificant():
+            edit.editIsSignificant = 1
+        self.super__redo()
 
 
 class JESEditorDocument(HighlightingStyledDocument):
@@ -69,35 +98,43 @@ class JESEditorDocument(HighlightingStyledDocument):
         self.stringAttrib = swing.text.SimpleAttributeSet()
         self.lParenAttrib = swing.text.SimpleAttributeSet()
         self.rParenAttrib = swing.text.SimpleAttributeSet()
+        self.numberAttrib = swing.text.SimpleAttributeSet()
+        self.matchingAttrib = swing.text.SimpleAttributeSet()
         self.needToSetEnvironment = 1
         self.fontSize = JESConfig.getInstance().getIntegerProperty(
             JESConfig.CONFIG_FONT)
 
         swing.text.StyleConstants.setForeground(
-            self.stringAttrib, STRING_COLOR)
+            self.stringAttrib, STRING_COLOR_L)
         swing.text.StyleConstants.setFontFamily(
             self.stringAttrib, "Monospaced")
 
         swing.text.StyleConstants.setForeground(
-            self.commentAttrib, COMMENT_COLOR)
+            self.commentAttrib, COMMENT_COLOR_L)
         swing.text.StyleConstants.setFontFamily(
             self.commentAttrib, "Monospaced")
 
         swing.text.StyleConstants.setForeground(
-            self.jesEnvironmentWordAttrib, ENVIRONMENT_WORD_COLOR)
+            self.jesEnvironmentWordAttrib, ENVIRONMENT_WORD_COLOR_L)
         swing.text.StyleConstants.setBold(
             self.jesEnvironmentWordAttrib, KEYWORD_BOLD)
         swing.text.StyleConstants.setFontSize(
             self.jesEnvironmentWordAttrib, self.fontSize)
         swing.text.StyleConstants.setFontSize(self.textAttrib, self.fontSize)
-        swing.text.StyleConstants.setBackground(
-            self.textAttrib, awt.Color.white)
+        if JESConfig.getInstance().getBooleanProperty(JESConfig.CONFIG_DARK):
+            swing.text.StyleConstants.setBackground(
+                self.textAttrib, BACKGROUND_COLOR)
+        else:
+            swing.text.StyleConstants.setBackground(
+                self.textAttrib, awt.Color.white)
+        swing.text.StyleConstants.setForeground(
+            self.textAttrib, TEXT_COLOR_L)
         swing.text.StyleConstants.setFontFamily(
             self.jesEnvironmentWordAttrib, "Monospaced")
         swing.text.StyleConstants.setFontFamily(self.textAttrib, "Monospaced")
 
         swing.text.StyleConstants.setForeground(
-            self.keywordAttrib, KEYWORD_COLOR)
+            self.keywordAttrib, KEYWORD_COLOR_L)
         swing.text.StyleConstants.setBold(self.keywordAttrib, KEYWORD_BOLD)
         swing.text.StyleConstants.setFontSize(
             self.keywordAttrib, self.fontSize)
@@ -105,7 +142,7 @@ class JESEditorDocument(HighlightingStyledDocument):
             self.keywordAttrib, "Monospaced")
 
         swing.text.StyleConstants.setForeground(
-            self.lParenAttrib, LPAREN_COLOR)
+            self.lParenAttrib, LPAREN_COLOR_L)
         swing.text.StyleConstants.setBold(
             self.lParenAttrib, INVALID_PAREN_BOLD)
         swing.text.StyleConstants.setFontSize(self.lParenAttrib, self.fontSize)
@@ -113,12 +150,26 @@ class JESEditorDocument(HighlightingStyledDocument):
             self.lParenAttrib, "Monospaced")
 
         swing.text.StyleConstants.setForeground(
-            self.rParenAttrib, RPAREN_COLOR)
+            self.rParenAttrib, RPAREN_COLOR_L)
         swing.text.StyleConstants.setBold(
             self.rParenAttrib, INVALID_PAREN_BOLD)
         swing.text.StyleConstants.setFontSize(self.rParenAttrib, self.fontSize)
         swing.text.StyleConstants.setFontFamily(
             self.rParenAttrib, "Monospaced")
+
+        swing.text.StyleConstants.setForeground(
+            self.numberAttrib, NUMBER_COLOR_L)
+        swing.text.StyleConstants.setFontSize(self.numberAttrib, self.fontSize)
+        swing.text.StyleConstants.setFontFamily(
+            self.numberAttrib, "Monospaced")
+
+        swing.text.StyleConstants.setForeground(
+            self.matchingAttrib, MATCH_COLOR_L)
+        swing.text.StyleConstants.setBackground(
+            self.matchingAttrib, MATCH_BACK_COLOR)
+        swing.text.StyleConstants.setFontSize(self.matchingAttrib, self.fontSize)
+        swing.text.StyleConstants.setFontFamily(
+            self.matchingAttrib, "Monospaced")
 
         swing.text.StyleConstants.setForeground(
             self.errorLineAttrib, ERROR_LINE_FONT_COLOR)
@@ -137,8 +188,9 @@ class JESEditorDocument(HighlightingStyledDocument):
         #self.undoEvents = []
 
         # Sets up the UndoManager which handles all undos/redos
-        self.undoManager = swing.undo.UndoManager()
+        self.undoManager = JESUndoManager()
         self.undoManager.setLimit(MAX_UNDO_EVENTS_TO_RETAIN)
+        self.lastUndoTime = None
 
         self.setKeywordStyle(self.keywordAttrib)
         self.setEnvironmentWordStyle(self.jesEnvironmentWordAttrib)
@@ -146,6 +198,7 @@ class JESEditorDocument(HighlightingStyledDocument):
         self.setLParenStyle(self.lParenAttrib)
         self.setRParenStyle(self.rParenAttrib)
         self.setCommentStyle(self.commentAttrib)
+        self.setNumberStyle(self.numberAttrib)
         self.setDefaultStyle(self.textAttrib)
 
         # The following variables are set when showErrorLine is called.  They
@@ -155,6 +208,52 @@ class JESEditorDocument(HighlightingStyledDocument):
         self.errorLineLen = -1
         self.highlightLineStart = -1
         self.highlightLineLen = -1
+
+
+    def setDarkMode(self, enable):
+        if enable:
+            swing.text.StyleConstants.setForeground(
+                self.textAttrib, TEXT_COLOR)
+            swing.text.StyleConstants.setForeground(
+                self.keywordAttrib, KEYWORD_COLOR)
+            swing.text.StyleConstants.setForeground(
+                self.jesEnvironmentWordAttrib, ENVIRONMENT_WORD_COLOR)
+            swing.text.StyleConstants.setForeground(
+                self.commentAttrib, COMMENT_COLOR)
+            swing.text.StyleConstants.setForeground(
+                self.stringAttrib, STRING_COLOR)
+            swing.text.StyleConstants.setForeground(
+                self.lParenAttrib, LPAREN_COLOR)
+            swing.text.StyleConstants.setForeground(
+                self.rParenAttrib, RPAREN_COLOR)
+            swing.text.StyleConstants.setForeground(
+                self.numberAttrib, NUMBER_COLOR)
+            swing.text.StyleConstants.setForeground(
+                self.matchingAttrib, MATCH_COLOR)
+            swing.text.StyleConstants.setBackground(
+                self.textAttrib, BACKGROUND_COLOR)
+        else:
+            swing.text.StyleConstants.setForeground(
+                self.textAttrib, TEXT_COLOR_L)
+            swing.text.StyleConstants.setForeground(
+                self.keywordAttrib, KEYWORD_COLOR_L)
+            swing.text.StyleConstants.setForeground(
+                self.jesEnvironmentWordAttrib, ENVIRONMENT_WORD_COLOR_L)
+            swing.text.StyleConstants.setForeground(
+                self.commentAttrib, COMMENT_COLOR_L)
+            swing.text.StyleConstants.setForeground(
+                self.stringAttrib, STRING_COLOR_L)
+            swing.text.StyleConstants.setForeground(
+                self.lParenAttrib, LPAREN_COLOR_L)
+            swing.text.StyleConstants.setForeground(
+                self.rParenAttrib, RPAREN_COLOR_L)
+            swing.text.StyleConstants.setForeground(
+                self.numberAttrib, NUMBER_COLOR_L)
+            swing.text.StyleConstants.setForeground(
+                self.matchingAttrib, MATCH_COLOR_L)
+            swing.text.StyleConstants.setBackground(
+                self.textAttrib, awt.Color(0, 0, 0, 0))
+        self.updateHighlightingInRange(0, self.getLength())
 
 ##########################################################################
 # Function name: changeFontSize
@@ -190,7 +289,9 @@ class JESEditorDocument(HighlightingStyledDocument):
 #     the target text and then calls the keywordHighlightEvent function to
 #     highlight keywords.
 ##########################################################################
-    def insertString(self, offset, str, a, addUndoEvent=1):
+    def insertString(self, offset, str, a=None, addUndoEvent=1, significantUndo=1):
+        caretMove = 0
+        selectLength = 0
         if self.needToSetEnvironment:
             # Give the environment and key words to the Highlighting Document
             self.setEnvironmentWords(self.editor.program.getVarsToHighlight())
@@ -200,10 +301,77 @@ class JESEditorDocument(HighlightingStyledDocument):
             self.removeErrorHighlighting()
         if self.highlightLineStart >= 0:
             self.removeLineHighlighting()
-        if str == '\t':
-            str = "  "
-        # Added to make auto indent work
-        if str == '\n':
+
+        canPlaceClosingChar = offset == self.getLength() or not self.getText(offset, 1).isalnum()
+        if str == ':':
+            if self.getText(offset, 1) == ':':
+                str = ''
+                caretMove = 1
+        elif str == '(':
+            if canPlaceClosingChar:
+                str = '()'
+                caretMove = -1
+        elif str == ')':
+            if self.getText(offset, 1) == ")":
+                str = ''
+                caretMove = 1
+        elif str == '[':
+            if canPlaceClosingChar:
+                str = '[]'
+                caretMove = -1
+        elif str == ']':
+            if self.getText(offset, 1) == "]":
+                str = ''
+                caretMove = 1
+        elif str == '"':
+            if self.getText(offset, 1) == '"':
+                str = ''
+                caretMove = 1
+            elif canPlaceClosingChar:
+                str = '""'
+                caretMove = -1
+        elif str == "'":
+            if self.getText(offset, 1) == "'":
+                str = ''
+                caretMove = 1
+            elif canPlaceClosingChar:
+                str = "''"
+                caretMove = -1
+        elif str == '\t':   # Added to make auto indent work
+            # TODO: add check for autofilled for-loop (if at end of variable name, goes inside range() method)
+            defaultElement = self.getDefaultRootElement()
+            rowIndex = defaultElement.getElementIndex(offset)
+            rowStart = defaultElement.getElement(rowIndex).getStartOffset()
+            rowEnd = defaultElement.getElement(rowIndex).getEndOffset() - 1
+            rowText = self.getText(
+                rowStart, rowEnd - rowStart)  # .expandtabs()
+            newRowText = rowText.rstrip()
+            numSpacesRight = len(rowText) - len(newRowText)
+            newRowText = newRowText.lstrip()
+            if newRowText.startswith('def ') and newRowText.endswith('():') and offset == rowEnd - numSpacesRight - 3:
+                str = ''
+                caretMove = 1
+            elif newRowText.startswith('for ') and newRowText.endswith(' in range():') and offset == rowEnd - numSpacesRight - 12:
+                str = ''
+                caretMove = 10
+            else:
+                str = " " * (2 - ((offset - rowStart) % 2)) # number of spaces matches current position
+        elif str == '\n':
+            defaultElement = self.getDefaultRootElement()
+            rowIndex = defaultElement.getElementIndex(offset)
+            rowStart = defaultElement.getElement(rowIndex).getStartOffset()
+            if offset > rowStart:
+                rowEnd = defaultElement.getElement(rowIndex).getEndOffset() - 1
+                rowText = self.getText(
+                    rowStart, rowEnd - rowStart)  # .expandtabs()
+                newRowText = rowText.lstrip()
+                numSpaces = (len(rowText) - len(newRowText))
+                str = "\n" + (" " * numSpaces)
+
+                newRowText = newRowText.rstrip()
+                if len(newRowText) > 0 and newRowText[len(newRowText)-1] == ':': # auto add indent after ':'
+                    str = str + "  "
+        elif str == ' ' and JESConfig.getInstance().getBooleanProperty(JESConfig.CONFIG_AUTOCOMPLETE):
             defaultElement = self.getDefaultRootElement()
             rowIndex = defaultElement.getElementIndex(offset)
             rowStart = defaultElement.getElement(rowIndex).getStartOffset()
@@ -211,13 +379,41 @@ class JESEditorDocument(HighlightingStyledDocument):
             rowText = self.getText(
                 rowStart, rowEnd - rowStart)  # .expandtabs()
             newRowText = rowText.lstrip()
-            numSpaces = (len(rowText) - len(newRowText))
-            str = "\n" + (" " * numSpaces)
+            if newRowText == 'def':
+                str = " methodName():"
+                caretMove = -13
+                selectLength = 10
+            elif newRowText == 'if':
+                str = " condition:"
+                caretMove = -10
+                selectLength = 9
+            elif newRowText == 'elif':
+                str = " condition:"
+                caretMove = -10
+                selectLength = 9
+            elif newRowText == 'for':
+                str = " i in range():"
+                caretMove = -13
+                selectLength = 1
+            elif newRowText == 'while':
+                str = " condition:"
+                caretMove = -5
+                selectLength = 4
+
+
         self.editor.modified = 1
         self.editor.gui.loadButton.enabled = 1
+        self.editor.gui.saveButton.enabled = 1
         if addUndoEvent:
-            self.addUndoEvent(INSERT_EVENT, offset, str)
+            self.addUndoEvent(INSERT_EVENT, offset, str, significantUndo)
+        self.editor.matchingCharPos.append(-1)
         HighlightingStyledDocument.insertString(self, offset, str, self.textAttrib)
+        caretPos = max(0,self.editor.getCaretPosition() + caretMove)
+        if selectLength > 0:
+            self.editor.select(caretPos, caretPos + selectLength)
+        elif caretMove != 0:
+            self.editor.setCaretPosition(caretPos)
+        self.editor.setTitleModified(True)
 
 
 ##########################################################################
@@ -230,18 +426,50 @@ class JESEditorDocument(HighlightingStyledDocument):
 #     target text and then calls the keywordHighlightEvent function to highlight
 #     keywords.
 ##########################################################################
-    def remove(self, offset, len, addUndoEvent=1):
+    def remove(self, offset, length, addUndoEvent=1, significant=1):
         if self.errorLineStart >= 0:
             self.removeErrorHighlighting()
         if self.highlightLineStart >= 0:
             self.removeLineHighlighting()
         self.editor.modified = 1
         self.editor.gui.loadButton.enabled = 1
+        self.editor.gui.saveButton.enabled = 1
+
+        if length == 1:
+            text = self.getText(0, self.getLength())
+
+            if text[offset:offset+2] == '()':
+                length = 2
+            elif text[offset:offset+2] == '[]':
+                length = 2
+            elif text[offset:offset+2] == '""':
+                length = 2
+            elif text[offset:offset+2] == "''":
+                length = 2
+            else:
+                scan = offset
+                while scan > 0 and text[scan] != '\n':
+                    scan -= 1;
+                if scan == 0:
+                    scan = -1
+                if text[scan+1:offset+1].lstrip() == "": #remove indentation
+                    numSpaces = offset - scan
+                    if numSpaces != 0:
+                        if numSpaces % 2 == 0:
+                            offset -= 1
+                            length = 2
+                        else:
+                            offset -= (numSpaces % 2) - 1
+                            length = numSpaces % 2
+
         if addUndoEvent:
             self.addUndoEvent(REMOVE_EVENT,
                               offset,
-                              self.getText(offset, len))
-        HighlightingStyledDocument.remove(self, offset, len)
+                              self.getText(offset, length), significant)
+
+        self.editor.matchingCharPos.append(-1)
+        HighlightingStyledDocument.remove(self, offset, length)
+        self.editor.setTitleModified(True)
 
 
 ##########################################################################
@@ -295,9 +523,17 @@ class JESEditorDocument(HighlightingStyledDocument):
 #     Modified to use an UpdateManager instead of event array,
 #     making "redo" possible. - 29 May 2008 Buck Scharfnorth
 ##########################################################################
-    def addUndoEvent(self, eventType, offset, str):
+    def addUndoEvent(self, eventType, offset, str, significant=1, strOld=""):
+        if self.lastUndoTime == None:
+            self.lastUndoTime = time.Instant.now()
+        else:
+            timeNow = time.Instant.now()
+            timeElapsed = time.Duration.between(self.lastUndoTime, timeNow)
+            if timeElapsed.toMillis() < 300:
+                significant = 0
+            self.lastUndoTime = timeNow
         self.editor.gui.editorChanged()
-        self.undoManager.addEdit(UndoableEdit(self, 1, eventType, offset, str))
+        self.undoManager.addEdit(UndoableEdit(self, significant, eventType, offset, str, strOld))
 
 ##########################################################################
 # Function name: undo
@@ -307,6 +543,7 @@ class JESEditorDocument(HighlightingStyledDocument):
 ##########################################################################
     def undo(self):
         self.editor.gui.editorChanged()
+        self.editor.clearMatchingChars()
         # if len(self.undoEvents) > 0:
         #lastEvent = self.undoEvents.pop()
         # if lastEvent[0] == INSERT_EVENT:
@@ -318,8 +555,11 @@ class JESEditorDocument(HighlightingStyledDocument):
         #                      lastEvent[2],
         #                      self.textAttrib,
         #                      0)
+        self.editor.disableMatchingChar = True
         if self.undoManager.canUndo():
             self.undoManager.undo()
+        self.editor.disableMatchingChar = False
+        # self.undoManager.undo()
 
 ##########################################################################
 # Function name: redo
@@ -328,8 +568,12 @@ class JESEditorDocument(HighlightingStyledDocument):
 ##########################################################################
     def redo(self):
         self.editor.gui.editorChanged()
+        self.editor.clearMatchingChars()
+        self.editor.disableMatchingChar = True
         if self.undoManager.canRedo():
             self.undoManager.redo()
+        self.editor.disableMatchingChar = False
+
 
 ##########################################################################
 # Function name: showErrorLine
@@ -433,7 +677,7 @@ class JESEditorDocument(HighlightingStyledDocument):
         self.targetLineStart = offset
         self.targetLineLen = endOffset - offset
 
-        # Set cusor to target line to ensure that the error line will be
+        # Set cursor to target line to ensure that the error line will be
         # visible
         self.editor.setCaretPosition(self.targetLineStart)
 

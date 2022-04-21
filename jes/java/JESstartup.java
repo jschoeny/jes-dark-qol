@@ -5,7 +5,10 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Properties;
 import javax.swing.RepaintManager;
+import javax.swing.UIManager;
+import javax.swing.JFrame;
 import org.python.util.jython;
+import com.formdev.flatlaf.*;
 
 /**
  * The main launcher class for JES
@@ -43,7 +46,12 @@ public class JESstartup {
             System.out.println(ioException.getMessage() );
         }
         */
-        
+
+        UIManager.installLookAndFeel("FlatLaf Light", FlatLightLaf.class.getName());
+        UIManager.installLookAndFeel("FlatLaf Dark", FlatDarkLaf.class.getName());
+        UIManager.installLookAndFeel("FlatLaf IntelliJ", FlatIntelliJLaf.class.getName());
+        UIManager.installLookAndFeel("FlatLaf Darcula", FlatDarculaLaf.class.getName());
+
         System.setProperty("jes.starttimens", String.valueOf(System.nanoTime()));
 
         String home = JESResources.getHomePath();
@@ -173,4 +181,3 @@ public class JESstartup {
         return var_class;
     }
 }
-

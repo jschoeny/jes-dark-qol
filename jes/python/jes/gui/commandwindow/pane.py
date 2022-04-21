@@ -31,6 +31,7 @@ class CommandWindowPane(JTextPane, FocusListener):
         self.updateTheme(doc)
         doc.onThemeSet.connect(self.updateTheme)
         self.addFocusListener(self)
+        self.focused = False
 
         self.standardKeymap = self.getKeymap()
 
@@ -130,9 +131,15 @@ class CommandWindowPane(JTextPane, FocusListener):
 
     def focusGained(self, event):
         self.caret.visible = True
+        self.controller._gui.editor.focused = False
+        self.controller._gui.editor.repaint()
+        self.controller._gui.gutter.setFocused(False)
 
     def focusLost(self, event):
         self.caret.visible = False
+        self.controller._gui.editor.focused = True
+        self.controller._gui.editor.repaint()
+        self.controller._gui.gutter.setFocused(True)
 
 
 def getContentToPaste(forComponent):
@@ -144,4 +151,3 @@ def getContentToPaste(forComponent):
             return clipContents.getTransferData(flavor)
 
     return None
-

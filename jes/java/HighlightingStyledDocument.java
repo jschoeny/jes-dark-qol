@@ -34,6 +34,9 @@ public class HighlightingStyledDocument extends DefaultStyledDocument {
     private SimpleAttributeSet rParenStyle = new SimpleAttributeSet();
     private SimpleAttributeSet lParenStyle = new SimpleAttributeSet();
 
+    /* Number Style */
+    private SimpleAttributeSet numberStyle = new SimpleAttributeSet();
+
     /* Default Style */
     private SimpleAttributeSet defaultStyle = new SimpleAttributeSet();
 
@@ -48,12 +51,16 @@ public class HighlightingStyledDocument extends DefaultStyledDocument {
 
     /* Jython environment words */
     private Vector<String> environmentWords = new Vector<String>();
+    private Vector<String> environmentFuncWords = new Vector<String>();
 
     /* Generated Regular expression for keywords */
     private Pattern keyReg = Pattern.compile("");
 
     /* Generated regular expression for environment words */
     private Pattern envReg = Pattern.compile("");
+
+    /* Generated regular expression for environment words that are functions */
+    private Pattern envFuncReg = Pattern.compile("");
 
     /* Regular Expression for parentheses */
     //    private Patter extraParenReg = Pattern.compile("[\)\(]");
@@ -78,6 +85,12 @@ public class HighlightingStyledDocument extends DefaultStyledDocument {
 
     /* Regular Expression to match triple qoutes */
     private Pattern triQuote = Pattern.compile("\"\"\"");
+
+    /* Regular Expression to match = * / - + symbols */
+    private Pattern symbolReg = Pattern.compile("(=+)|(\\*+)|(\\/+)|(\\-+)|(\\++)");
+
+    /* Regular Expression to match real numbers */
+    private Pattern numberReg = Pattern.compile("\\b[0-9]+\\.?[0-9]*");
 
     /** The system specific line separator String. */
     public static String newline = System.getProperty("line.separator");
@@ -140,16 +153,37 @@ public class HighlightingStyledDocument extends DefaultStyledDocument {
                 setCharacterAttributes(start + m.start(), m.end() - m.start(), keywordStyle, true);
             }
 
-            //Find and highlight keywords:
+            //Find and highlight symbols
+            m = symbolReg.matcher(text);
+            while (m.find()) {
+                setCharacterAttributes(start + m.start(), m.end() - m.start(), keywordStyle, true);
+            }
+
+            //Find and highlight environment keywords:
             m = envReg.matcher(text);
             while (m.find()) {
                 setCharacterAttributes(start + m.start(), m.end() - m.start(), environmentWordStyle, true);
             }
 
+            //Find and highlight numbers:
+            m = numberReg.matcher(text);
+            while (m.find()) {
+                setCharacterAttributes(start + m.start(), m.end() - m.start(), numberStyle, true);
+            }
+
+            //Find and highlight environment function keywords:
+            m = envFuncReg.matcher(text);
+            while (m.find()) {
+                //Check for ( after last char to prove it is a function
+                String nextChar = fullText.substring(start + m.end(), start + m.end() + 1);
+                if(nextChar.equals("(")) {
+                    setCharacterAttributes(start + m.start(), m.end() - m.start(), environmentWordStyle, true);
+                }
+            }
+
             //Find and highlight Comments and strings:
             m = stringComments.matcher(text);
             while (m.find()) {
-                //System.out.println("Matched: " + getText(start + m.start(), m.end() - m.start()));
                 if (text.charAt(m.start()) == '#') {
                     setCharacterAttributes(start + m.start(), m.end() - m.start(), commentStyle, true);
                 }
@@ -224,6 +258,7 @@ public class HighlightingStyledDocument extends DefaultStyledDocument {
         for (int i = 0; i < words.length; i++) {
             keywords.add(words[i]);
         }
+
         compileKeywords();
     }
 
@@ -236,6 +271,12 @@ public class HighlightingStyledDocument extends DefaultStyledDocument {
         for (int i = 0; i < words.length; i++) {
             environmentWords.add(words[i]);
         }
+        environmentWords.add("True");
+        environmentWords.add("False");
+
+        environmentFuncWords.add("int");
+        environmentFuncWords.add("str");
+
         compileEnvironmentWords();
     }
 
@@ -285,6 +326,14 @@ public class HighlightingStyledDocument extends DefaultStyledDocument {
      */
     public void setRParenStyle(SimpleAttributeSet style) {
         rParenStyle = style;
+    }
+
+    /**
+     * Sets the style of text to use for real numbers
+     * @param style the new text style
+     */
+    public void setNumberStyle(SimpleAttributeSet style) {
+        numberStyle = style;
     }
 
     /**
@@ -339,6 +388,17 @@ public class HighlightingStyledDocument extends DefaultStyledDocument {
         }
         exp = exp + ")\\b";
         envReg = Pattern.compile(exp);
+
+        exp = "\\b(";   //Start the expression to match non-word characters,
+        //i.e. [^a-zA-Z0-9], and then start the OR block.
+        for (int i = 0; i < environmentFuncWords.size(); i++) {
+            if (i == 0) {
+                exp = exp + ((String)environmentFuncWords.elementAt(i)).trim();
+            }
+            exp = exp + "|" + ((String)environmentFuncWords.elementAt(i)).trim();
+        }
+        exp = exp + ")\\b";
+        envFuncReg = Pattern.compile(exp);
     }
 
 

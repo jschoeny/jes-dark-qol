@@ -48,13 +48,17 @@ public class JESConfig {
     /** Whether to help the user indent with an indentation block. */
     public static final String CONFIG_BLOCK = "interface.block";
 
+    /** Whether to force dark mode for the editor pane **/
+    public static final String CONFIG_DARK = "interface.dark";
+
+    /** Whether to use auto complete for the editor pane **/
+    public static final String CONFIG_AUTOCOMPLETE = "interface.autocomplete";
 
     /** Whether to save files automatically on load. */
     public static final String CONFIG_AUTOSAVEONRUN = "save.onload";
 
     /** Whether to save backup files. */
     public static final String CONFIG_BACKUPSAVE = "save.backups";
-
 
     /** The list of recent files. */
     public static final String CONFIG_RECENT_FILES = "recentfiles";
@@ -76,6 +80,8 @@ public class JESConfig {
         defaults.setProperty(CONFIG_COMMAND_WINDOW_THEME,   "Old JES (Yellow on Black)");
         defaults.setProperty(CONFIG_GUTTER,                 "1");
         defaults.setProperty(CONFIG_BLOCK,                  "0");
+        defaults.setProperty(CONFIG_DARK,                   "0");
+        defaults.setProperty(CONFIG_AUTOCOMPLETE,           "1");
 
         defaults.setProperty(CONFIG_AUTOSAVEONRUN,          "0");
         defaults.setProperty(CONFIG_BACKUPSAVE,             "1");
@@ -444,4 +450,3 @@ public class JESConfig {
         }
     }
 }
-
