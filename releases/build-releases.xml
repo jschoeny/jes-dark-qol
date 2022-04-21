@@ -374,7 +374,7 @@
         </copy>
 
         <!-- Patch the Info.plist file -->
-        <java classname="${python.main}" failonerror="true">
+        <java classname="${python.main}" failonerror="true" fork="yes">
             <classpath refid="jes.classpath" />
             <sysproperty key="python.home" value="${python.home}" />
 
@@ -388,14 +388,14 @@
 
         <copy file="${jes.help.copyright}"
               tofile="${jes.release.macosx.stage}/JES Copyright.txt"
-               /> 
+               />
 
         <!-- Zip it all up -->
         <zip destfile="${jes.release.macosx.zipfile}">
             <zipfileset  dir="${jes.release.macosx.stage}" >
                 <include name="JES.app/**/*" />
                 <include name="JES Information.txt" />
-                <include name="JES Copyright.txt" /> 
+                <include name="JES Copyright.txt" />
                 <exclude name="JES.app/Contents/MacOS/jes-launcher.sh" />
             </zipfileset>
 
@@ -404,7 +404,7 @@
                 <exclude name="**/*.pybak" />
                 <exclude name="**/*.pylog" />
                 <exclude name="**/*$py.class" />
-            </zipfileset> 
+            </zipfileset>
 
             <zipfileset filemode="755" dir="${jes.release.macosx.stage}" >
                 <include name="JES.app/Contents/MacOS/jes-launcher.sh" />
