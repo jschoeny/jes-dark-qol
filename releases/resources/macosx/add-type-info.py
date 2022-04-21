@@ -31,8 +31,8 @@ pyType = {
 }
 
 contents.setdefault("CFBundleDocumentTypes", []).append(pyType)
+contents.setdefault("NSHighResolutionCapable", True)
 
 # Write it back out.
 
 plistlib.writePlist(contents, filename)
-
