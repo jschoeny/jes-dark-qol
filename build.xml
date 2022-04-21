@@ -142,6 +142,7 @@
     <path id="jes.classpath">
         <pathelement path="${jes.java.jar}" />
         <pathelement path="${jes.instruments.jar}" />
+        <pathelement path="${jes.deps.jardir}/flatlaf-2.1.jar" />
         <fileset refid="jes.deps.jars" />
     </path>
 
