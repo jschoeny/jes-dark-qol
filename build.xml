@@ -41,8 +41,8 @@
 
     <!-- Other metadata -->
     <property name="jes.vendor"         value="Georgia Institute of Technology" />
-    <property name="jes.copyright"      value="© 2019 Matthew Frazier, Mark Guzdial, and others" />
-    <property name="jes.version"        value="6.0" />
+    <property name="jes.copyright"      value="© 2022 Jared Schoeny, Matthew Frazier, Mark Guzdial, and others" />
+    <property name="jes.version"        value="7.0" />
     <property name="jes.release"        value="${jes.version}${release}" />
 
     <tstamp>
@@ -51,10 +51,10 @@
     </tstamp>
 
     <!-- Websites -->
-    <property name="jes.homepage"       value="https://github.com/gatech-csl/jes" />
+    <property name="jes.homepage"       value="https://github.com/jschoeny/jes-dark-qol" />
     <property name="jes.homepage.host"  value="GitHub" />
 
-    <property name="jes.issues"         value="https://github.com/gatech-csl/jes/issues" />
+    <property name="jes.issues"         value="https://github.com/jschoeny/jes-dark-qol/issues" />
     <property name="jes.issues.host"    value="GitHub" />
 
     <!-- Filter tokens -->
