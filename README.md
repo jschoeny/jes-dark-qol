@@ -19,7 +19,7 @@ You can read the full license information in the `jes/help/JESCopyright.txt`
 file.
 
 [download]: https://github.com/jschoeny/jes-dark-qol/releases
-[DOWNLOADS][download]
+[Downloads][download]
 ---------------------
 
 Running JES
