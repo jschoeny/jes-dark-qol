@@ -176,4 +176,4 @@ compile the `jes-launcher.sh` file using `shc`, a Generic Shell Script Compiler.
 If the `jes-launcher.sh` file is ever changed, make sure to re-compile it as a
 binary using `shc` on a Mac.
 
-Usage: `shc -f jes-launcher.sh`
+Usage: `shc -r -f jes-launcher.sh`
