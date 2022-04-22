@@ -317,7 +317,7 @@
 
 
     <!-- Mac OS X release -->
-    <property name="jes.release.macosx.basename" value="${jes.release.basename}-macosx" />
+    <property name="jes.release.macosx.basename" value="${jes.release.basename}-macos" />
     <property name="jes.release.macosx.resources" location="${jes.release.resources}/macosx" />
     <property name="jes.release.macosx.stage"
             location="${jes.release.stage}/${jes.release.macosx.basename}" />
