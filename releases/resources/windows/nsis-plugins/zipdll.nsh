@@ -75,19 +75,19 @@
     StrCmp $LANGUAGE ${LANG_HUNGARIAN} 0 +10
 
       Push "  Hiba: %s"
-      Push "Nem olvasható a fájl attribútumai."
-      Push "Hiba: Nem olvasható a fájl attribútumai."
-      Push "Nem sikerült kicsomagolni a(z) %s"
-      Push "  Hiba: Nem sikerült kicsomagolni a(z) %s"
+      Push "Nem olvashatÃ³ a fÃ¡jl attribÃºtumai."
+      Push "Hiba: Nem olvashatÃ³ a fÃ¡jl attribÃºtumai."
+      Push "Nem sikerÃ¼lt kicsomagolni a(z) %s"
+      Push "  Hiba: Nem sikerÃ¼lt kicsomagolni a(z) %s"
 
       !ifdef FILE_<ALL>
-        Push "  Kicsomagolás: %s"
-        Push "  %d fájl és mappa kicsomagolása"
-        Push "%s tartalom kicsomagolása a %s helyre"
+        Push "  KicsomagolÃ¡s: %s"
+        Push "  %d fÃ¡jl Ã©s mappa kicsomagolÃ¡sa"
+        Push "%s tartalom kicsomagolÃ¡sa a %s helyre"
       !else
-        Push "A megadott fájl nem található az arhívumban."
-        Push "Hiba: A megadott fájl nem található az arhívumban."
-        Push "%s fájl kcsomagolása a(z) %s fájlból a %s helyre"
+        Push "A megadott fÃ¡jl nem talÃ¡lhatÃ³ az arhÃ­vumban."
+        Push "Hiba: A megadott fÃ¡jl nem talÃ¡lhatÃ³ az arhÃ­vumban."
+        Push "%s fÃ¡jl kcsomagolÃ¡sa a(z) %s fÃ¡jlbÃ³l a %s helyre"
       !endif
 
       Push "/TRANSLATE"
@@ -99,19 +99,19 @@
     StrCmp $LANGUAGE ${LANG_FRENCH} 0 +10
 
       Push "  Erreur : %s"
-      Push "Impossible de récupérer les informations sur le fichier."
-      Push "Erreur : Impossible de récupérer les informations sur le fichier."
-      Push "Impossible de décompresser %s."
-      Push "  Erreur : Impossible de décompresser %s."
+      Push "Impossible de rÃ©cupÃ©rer les informations sur le fichier."
+      Push "Erreur : Impossible de rÃ©cupÃ©rer les informations sur le fichier."
+      Push "Impossible de dÃ©compresser %s."
+      Push "  Erreur : Impossible de dÃ©compresser %s."
 
       !ifdef FILE_<ALL>
-        Push "  Décompression : %s"
-        Push "  Décompression de %d fichiers et répertoires"
-        Push "Décompression des données de %s vers %s"
+        Push "  DÃ©compression : %s"
+        Push "  DÃ©compression de %d fichiers et rÃ©pertoires"
+        Push "DÃ©compression des donnÃ©es de %s vers %s"
       !else
-        Push "Le fichier spécifié n'existe pas dans l'archive"
-        Push "Erreur : Le fichier spécifié n'existe pas dans l'archive"
-        Push "Décompression du fichier %s depuis %s vers %s"
+        Push "Le fichier spÃ©cifiÃ© n'existe pas dans l'archive"
+        Push "Erreur : Le fichier spÃ©cifiÃ© n'existe pas dans l'archive"
+        Push "DÃ©compression du fichier %s depuis %s vers %s"
       !endif
 
       Push "/TRANSLATE"
@@ -171,18 +171,18 @@
     StrCmp $LANGUAGE ${LANG_PORTUGUESEBR} 0 +10
 
       Push "  Erro: %s"
-      Push "Não se pode ler os atributos do arquivo"
-      Push "Error: Não se pode ler os atributos do arquivo"
-      Push "Não se pode extrair %s"
-      Push "  Erro: Não se pode extrair %s"
+      Push "NÃ£o se pode ler os atributos do arquivo"
+      Push "Error: NÃ£o se pode ler os atributos do arquivo"
+      Push "NÃ£o se pode extrair %s"
+      Push "  Erro: NÃ£o se pode extrair %s"
 
       !ifdef FILE_<ALL>
         Push "  Extraindo: %s"
-        Push "  Extraindo %d arquivos e diretórios"
+        Push "  Extraindo %d arquivos e diretÃ³rios"
         Push "Extraindo arquivos de %s a %s"
       !else
-        Push "O arquivo especificado não existe no ZIP"
-        Push "Erro: O arquivo especificado não existe no ZIP"
+        Push "O arquivo especificado nÃ£o existe no ZIP"
+        Push "Erro: O arquivo especificado nÃ£o existe no ZIP"
         Push "Extraindo o arquivo %s de %s a %s"
       !endif
 
@@ -194,20 +194,20 @@
 
   StrCmp $LANGUAGE ${LANG_TRADCHINESE} 0 +11
 
-    Push "  ¿ù»~: %s"
-    Push "µLªk¨ú±oÀÉ®×Äİ©Ê¡C"
-    Push "¿ù»~: µLªk¨ú±oÀÉ®×Äİ©Ê¡C"
-    Push "µLªk¸ÑÀ£ÁY %s"
-    Push "  ¿ù»~¡GµLªk¸ÑÀ£ÁY %s"
+    Push "  Â¿Ã¹Â»~: %s"
+    Push "ÂµLÂªkÂ¨ÃºÂ±oÃ€Ã‰Â®Ã—Ã„ÃÂ©ÃŠÂ¡C"
+    Push "Â¿Ã¹Â»~: ÂµLÂªkÂ¨ÃºÂ±oÃ€Ã‰Â®Ã—Ã„ÃÂ©ÃŠÂ¡C"
+    Push "ÂµLÂªkÂ¸Ã‘Ã€Â£ÃY %s"
+    Push "  Â¿Ã¹Â»~Â¡GÂµLÂªkÂ¸Ã‘Ã€Â£ÃY %s"
     
     !ifdef FILE_<ALL>
-      Push "  ¸ÑÀ£ÁY¡G%s"
-      Push "  ¥¿¦b¸ÑÀ£ÁY %d ÀÉ®×»P¥Ø¿ı"
-      Push "¥¿¦b¸ÑÀ£ÁY %s ªº¤º®e¨ì %s"
+      Push "  Â¸Ã‘Ã€Â£ÃYÂ¡G%s"
+      Push "  Â¥Â¿Â¦bÂ¸Ã‘Ã€Â£ÃY %d Ã€Ã‰Â®Ã—Â»PÂ¥Ã˜Â¿Ã½"
+      Push "Â¥Â¿Â¦bÂ¸Ã‘Ã€Â£ÃY %s ÂªÂºÂ¤ÂºÂ®eÂ¨Ã¬ %s"
     !else
-      Push "«ü©wªºÀÉ®×¨Ã¤£¦s¦b©óÀ£ÁY¥]¡C"
-      Push "¿ù»~¡G«ü©wªºÀÉ®×¨Ã¤£¦s¦b©óÀ£ÁY¥]¡C"
-      Push "¥¿¦b¸ÑÀ£ÁYÀÉ®× %s ¡A±q %s ¨ì %s"
+      Push "Â«Ã¼Â©wÂªÂºÃ€Ã‰Â®Ã—Â¨ÃƒÂ¤Â£Â¦sÂ¦bÂ©Ã³Ã€Â£ÃYÂ¥]Â¡C"
+      Push "Â¿Ã¹Â»~Â¡GÂ«Ã¼Â©wÂªÂºÃ€Ã‰Â®Ã—Â¨ÃƒÂ¤Â£Â¦sÂ¦bÂ©Ã³Ã€Â£ÃYÂ¥]Â¡C"
+      Push "Â¥Â¿Â¦bÂ¸Ã‘Ã€Â£ÃYÃ€Ã‰Â®Ã— %s Â¡AÂ±q %s Â¨Ã¬ %s"
     !endif
     
     Push "/TRANSLATE"
@@ -218,20 +218,20 @@
 
   StrCmp $LANGUAGE ${LANG_SIMPCHINESE} 0 +11
 
-    Push "  ´íÎó: %s"
-    Push "ÎŞ·¨È¡µÃÎÄ¼şÊôĞÔ¡£"
-    Push "´íÎó: ÎŞ·¨È¡µÃÎÄ¼şÊôĞÔ¡£"
-    Push "ÎŞ·¨½âÑ¹Ëõ %s"
-    Push "  ´íÎó£ºÎŞ·¨½âÑ¹Ëõ %s"
+    Push "  Â´Ã­ÃÃ³: %s"
+    Push "ÃÃÂ·Â¨ÃˆÂ¡ÂµÃƒÃÃ„Â¼Ã¾ÃŠÃ´ÃÃ”Â¡Â£"
+    Push "Â´Ã­ÃÃ³: ÃÃÂ·Â¨ÃˆÂ¡ÂµÃƒÃÃ„Â¼Ã¾ÃŠÃ´ÃÃ”Â¡Â£"
+    Push "ÃÃÂ·Â¨Â½Ã¢Ã‘Â¹Ã‹Ãµ %s"
+    Push "  Â´Ã­ÃÃ³Â£ÂºÃÃÂ·Â¨Â½Ã¢Ã‘Â¹Ã‹Ãµ %s"
     
     !ifdef FILE_<ALL>
-      Push "  ½âÑ¹Ëõ£º%s"
-      Push "  ÕıÔÚ½âÑ¹Ëõ %d ÎÄ¼şÓëÄ¿Â¼"
-      Push "ÕıÔÚ½âÑ¹Ëõ %s µÄÄÚÈİµ½ %s"
+      Push "  Â½Ã¢Ã‘Â¹Ã‹ÃµÂ£Âº%s"
+      Push "  Ã•Ã½Ã”ÃšÂ½Ã¢Ã‘Â¹Ã‹Ãµ %d ÃÃ„Â¼Ã¾Ã“Ã«Ã„Â¿Ã‚Â¼"
+      Push "Ã•Ã½Ã”ÃšÂ½Ã¢Ã‘Â¹Ã‹Ãµ %s ÂµÃ„Ã„ÃšÃˆÃÂµÂ½ %s"
     !else
-      Push "Ö¸¶¨µÄÎÄ¼ş²¢²»´æÔÚÓÚÑ¹Ëõ°ü¡£"
-      Push "´íÎó£ºÖ¸¶¨µÄÎÄ¼ş²¢²»´æÔÚÓÚÑ¹Ëõ°ü¡£"
-      Push "ÕıÔÚ½âÑ¹ËõÎÄ¼ş %s £¬´Ó %s µ½ %s"
+      Push "Ã–Â¸Â¶Â¨ÂµÃ„ÃÃ„Â¼Ã¾Â²Â¢Â²Â»Â´Ã¦Ã”ÃšÃ“ÃšÃ‘Â¹Ã‹ÃµÂ°Ã¼Â¡Â£"
+      Push "Â´Ã­ÃÃ³Â£ÂºÃ–Â¸Â¶Â¨ÂµÃ„ÃÃ„Â¼Ã¾Â²Â¢Â²Â»Â´Ã¦Ã”ÃšÃ“ÃšÃ‘Â¹Ã‹ÃµÂ°Ã¼Â¡Â£"
+      Push "Ã•Ã½Ã”ÃšÂ½Ã¢Ã‘Â¹Ã‹ÃµÃÃ„Â¼Ã¾ %s Â£Â¬Â´Ã“ %s ÂµÂ½ %s"
     !endif
     
     Push "/TRANSLATE"
@@ -245,17 +245,17 @@
       Push "  Klaida: %s"
       Push "Negaleta gauti bylos nuorodu."
       Push "Klaida: Negaleta gauti bylos nuorodu."
-      Push "Negaleta ištraukti %s"
-      Push "  Klaida: Negaleta ištraukti %s"
+      Push "Negaleta iÅ¡traukti %s"
+      Push "  Klaida: Negaleta iÅ¡traukti %s"
 
       !ifdef FILE_<ALL>
-        Push "  Ištraukiam : %s"
-        Push "  Ištraukiame %d bylas ir katalogus"
-        Push "Ištraukiame viska is %s i %s"
+        Push "  IÅ¡traukiam : %s"
+        Push "  IÅ¡traukiame %d bylas ir katalogus"
+        Push "IÅ¡traukiame viska is %s i %s"
       !else
-        Push "Parinkta byla nesurasta šiame archyve."
-        Push "Klaida: Parinkta byla nesurasta šiame archyve."
-        Push "Ištraukiame byla %s iš %s i %s"
+        Push "Parinkta byla nesurasta Å¡iame archyve."
+        Push "Klaida: Parinkta byla nesurasta Å¡iame archyve."
+        Push "IÅ¡traukiame byla %s iÅ¡ %s i %s"
       !endif
 
       Push "/TRANSLATE"
@@ -266,19 +266,19 @@
 
     strcmp $LANGUAGE ${LANG_POLISH} 0 +10
 
-      Push "  B³¹d: %s"
-      Push "Nie mo¿e pobraæ atrybutu pliku."
-      Push "B³¹d: Nie mo¿e pobraæ atrybutu pliku."
-      Push "Nie mo¿e rozpakowaæ %s."
-      Push "  B³¹d: Nie mo¿e rozpakowaæ %s."
+      Push "  BÂ³Â¹d: %s"
+      Push "Nie moÂ¿e pobraÃ¦ atrybutu pliku."
+      Push "BÂ³Â¹d: Nie moÂ¿e pobraÃ¦ atrybutu pliku."
+      Push "Nie moÂ¿e rozpakowaÃ¦ %s."
+      Push "  BÂ³Â¹d: Nie moÂ¿e rozpakowaÃ¦ %s."
 
       !ifdef FILE_<ALL>
         Push "  Rozpakuj: %s"
-        Push "  Rozpakowywanie %d plików i katalogów"
-        Push "Rozpakowywanie zawartoœci %s do %s"
+        Push "  Rozpakowywanie %d plikÃ³w i katalogÃ³w"
+        Push "Rozpakowywanie zawartoÅ“ci %s do %s"
       !else
         Push "Plik nie istnieje w archiwum"
-        Push "B³¹d: Plik nie istnieje w archiwum"
+        Push "BÂ³Â¹d: Plik nie istnieje w archiwum"
         Push "Rozpakowywanie pliku %s z %s do %s"
       !endif
 
@@ -288,20 +288,20 @@
 
   !ifdef "LANG_KOREAN"
     strcmp $LANGUAGE ${LANG_KOREAN} 0 +10
-      Push "  ¿À·ù : %s"
-      Push "È­ÀÏ ¼Ó¼ºÀ» ¾ò¾î¿Ã ¼ö ¾ø½À´Ï´Ù."
-      Push "¿À·ù: È­ÀÏ ¼Ó¼ºÀ» ¾ò¾î¿Ã ¼ö ¾ø½À´Ï´Ù."
-      Push "%sÀ»(¸¦) Ç® ¼ö ¾ø½À´Ï´Ù."
-      Push "  ¿À·ù: %sÀ»(¸¦) Ç® ¼ö ¾ø½À´Ï´Ù."
+      Push "  Â¿Ã€Â·Ã¹ : %s"
+      Push "ÃˆÂ­Ã€Ã Â¼Ã“Â¼ÂºÃ€Â» Â¾Ã²Â¾Ã®Â¿Ãƒ Â¼Ã¶ Â¾Ã¸Â½Ã€Â´ÃÂ´Ã™."
+      Push "Â¿Ã€Â·Ã¹: ÃˆÂ­Ã€Ã Â¼Ã“Â¼ÂºÃ€Â» Â¾Ã²Â¾Ã®Â¿Ãƒ Â¼Ã¶ Â¾Ã¸Â½Ã€Â´ÃÂ´Ã™."
+      Push "%sÃ€Â»(Â¸Â¦) Ã‡Â® Â¼Ã¶ Â¾Ã¸Â½Ã€Â´ÃÂ´Ã™."
+      Push "  Â¿Ã€Â·Ã¹: %sÃ€Â»(Â¸Â¦) Ã‡Â® Â¼Ã¶ Â¾Ã¸Â½Ã€Â´ÃÂ´Ã™."
 
       !ifdef FILE_<ALL>
-        Push "  Ç®±â : %s"
-        Push "  %d°³ÀÇ ÆÄÀÏ°ú Æú´õ¸¦ Çª´Â Áß"
-        Push "%sÀÇ ³»¿ëÀ» %s¿¡ Çª´Â Áß"
+        Push "  Ã‡Â®Â±Ã¢ : %s"
+        Push "  %dÂ°Â³Ã€Ã‡ Ã†Ã„Ã€ÃÂ°Ãº Ã†ÃºÂ´ÃµÂ¸Â¦ Ã‡ÂªÂ´Ã‚ ÃÃŸ"
+        Push "%sÃ€Ã‡ Â³Â»Â¿Ã«Ã€Â» %sÂ¿Â¡ Ã‡ÂªÂ´Ã‚ ÃÃŸ"
       !else
-        Push "ÁöÁ¤µÈ ÆÄÀÏÀÌ ¾ĞÃà ÆÄÀÏ ¾È¿¡ ¾ø½À´Ï´Ù."
-        Push "¿À·ù: ÁöÁ¤µÈ ÆÄÀÏÀÌ ¾ĞÃà ÆÄÀÏ ¾È¿¡ ¾ø½À´Ï´Ù."
-        Push "%s ÆÄÀÏÀ» %s¿¡¼­ %s·Î Çª´Â Áß"
+        Push "ÃÃ¶ÃÂ¤ÂµÃˆ Ã†Ã„Ã€ÃÃ€ÃŒ Â¾ÃÃƒÃ  Ã†Ã„Ã€Ã Â¾ÃˆÂ¿Â¡ Â¾Ã¸Â½Ã€Â´ÃÂ´Ã™."
+        Push "Â¿Ã€Â·Ã¹: ÃÃ¶ÃÂ¤ÂµÃˆ Ã†Ã„Ã€ÃÃ€ÃŒ Â¾ÃÃƒÃ  Ã†Ã„Ã€Ã Â¾ÃˆÂ¿Â¡ Â¾Ã¸Â½Ã€Â´ÃÂ´Ã™."
+        Push "%s Ã†Ã„Ã€ÃÃ€Â» %sÂ¿Â¡Â¼Â­ %sÂ·Ã Ã‡ÂªÂ´Ã‚ ÃÃŸ"
       !endif
 
       Push "/TRANSLATE"
@@ -312,20 +312,20 @@
 
     strcmp $LANGUAGE ${LANG_RUSSIAN} 0 +10
 
-      Push "  Îøèáêà: %s"
-      Push "Íå ìîãó ïîëó÷èòü àòğèáóòû ôàéëà."
-      Push "Îøèáêà: Íå ìîãó ïîëó÷èòü àòğèáóòû ôàéëà."
-      Push "Íå ìîãó èçâëå÷ü %s"
-      Push "  Îøèáêà: Íå ìîãó èçâëå÷ü %s"
+      Push "  ÃÃ¸Ã¨Ã¡ÃªÃ : %s"
+      Push "ÃÃ¥ Ã¬Ã®Ã£Ã³ Ã¯Ã®Ã«Ã³Ã·Ã¨Ã²Ã¼ Ã Ã²Ã°Ã¨Ã¡Ã³Ã²Ã» Ã´Ã Ã©Ã«Ã ."
+      Push "ÃÃ¸Ã¨Ã¡ÃªÃ : ÃÃ¥ Ã¬Ã®Ã£Ã³ Ã¯Ã®Ã«Ã³Ã·Ã¨Ã²Ã¼ Ã Ã²Ã°Ã¨Ã¡Ã³Ã²Ã» Ã´Ã Ã©Ã«Ã ."
+      Push "ÃÃ¥ Ã¬Ã®Ã£Ã³ Ã¨Ã§Ã¢Ã«Ã¥Ã·Ã¼ %s"
+      Push "  ÃÃ¸Ã¨Ã¡ÃªÃ : ÃÃ¥ Ã¬Ã®Ã£Ã³ Ã¨Ã§Ã¢Ã«Ã¥Ã·Ã¼ %s"
 
       !ifdef LANG_<ALL>
-        Push "  Èçâëåêàş : %s"
-        Push "  Èçâëå÷åíèå %d ôàéëîâ è ïàïîê"
-        Push "Ñïèñîê èçâëåêàåìûõ ôàéëîâ èç %s â %s"
+        Push "  ÃˆÃ§Ã¢Ã«Ã¥ÃªÃ Ã¾ : %s"
+        Push "  ÃˆÃ§Ã¢Ã«Ã¥Ã·Ã¥Ã­Ã¨Ã¥ %d Ã´Ã Ã©Ã«Ã®Ã¢ Ã¨ Ã¯Ã Ã¯Ã®Ãª"
+        Push "Ã‘Ã¯Ã¨Ã±Ã®Ãª Ã¨Ã§Ã¢Ã«Ã¥ÃªÃ Ã¥Ã¬Ã»Ãµ Ã´Ã Ã©Ã«Ã®Ã¢ Ã¨Ã§ %s Ã¢ %s"
       !else
-        Push "Èçâëåêàåìûé ôàéë íå îáíàğóæåí â àğõèâå."
-        Push "Îøèáêà: SÈçâëåêàåìûé ôàéë íå îáíàğóæåí â àğõèâå."
-        Push "Èçâëå÷åíèå ôàéëà %s èç %s â %s"
+        Push "ÃˆÃ§Ã¢Ã«Ã¥ÃªÃ Ã¥Ã¬Ã»Ã© Ã´Ã Ã©Ã« Ã­Ã¥ Ã®Ã¡Ã­Ã Ã°Ã³Ã¦Ã¥Ã­ Ã¢ Ã Ã°ÃµÃ¨Ã¢Ã¥."
+        Push "ÃÃ¸Ã¨Ã¡ÃªÃ : SÃˆÃ§Ã¢Ã«Ã¥ÃªÃ Ã¥Ã¬Ã»Ã© Ã´Ã Ã©Ã« Ã­Ã¥ Ã®Ã¡Ã­Ã Ã°Ã³Ã¦Ã¥Ã­ Ã¢ Ã Ã°ÃµÃ¨Ã¢Ã¥."
+        Push "ÃˆÃ§Ã¢Ã«Ã¥Ã·Ã¥Ã­Ã¨Ã¥ Ã´Ã Ã©Ã«Ã  %s Ã¨Ã§ %s Ã¢ %s"
       !endif
 
       Push "/TRANSLATE"
@@ -336,20 +336,20 @@
 
     StrCmp $LANGUAGE ${LANG_ARABIC} 0 +10
 
-      Push "  ÎØÇÁ: %s"
-      Push "áã íÍÕá Úáì ÎÕÇÆÕ Çáãáİ."
-      Push "ÎØÇÁ: áã íÍÕá Úáì ÎÕÇÆÕ Çáãáİ."
-      Push "áÇ íãßä ÇÓÊÎÑÇÌ %s"
-      Push " ÎØÇÁ: áÇ íãßä ÇÓÊÎÑÇÌ %s"
+      Push "  ÃÃ˜Ã‡Ã: %s"
+      Push "Ã¡Ã£ Ã­ÃÃ•Ã¡ ÃšÃ¡Ã¬ ÃÃ•Ã‡Ã†Ã• Ã‡Ã¡Ã£Ã¡Ã."
+      Push "ÃÃ˜Ã‡Ã: Ã¡Ã£ Ã­ÃÃ•Ã¡ ÃšÃ¡Ã¬ ÃÃ•Ã‡Ã†Ã• Ã‡Ã¡Ã£Ã¡Ã."
+      Push "Ã¡Ã‡ Ã­Ã£ÃŸÃ¤ Ã‡Ã“ÃŠÃÃ‘Ã‡ÃŒ %s"
+      Push " ÃÃ˜Ã‡Ã: Ã¡Ã‡ Ã­Ã£ÃŸÃ¤ Ã‡Ã“ÃŠÃÃ‘Ã‡ÃŒ %s"
   
       !ifdef FILE_<ALL>
-        Push "  ÇÓÊÎÑÇÌ : %s"
-        Push "  ÇÓÊÎÑÇÌ ãÌáÏÇÊ æ ãáİÇÊ %d"
-        Push "ÇÓÊÎÑÇÌ ãÍÊæíÇÊ %s Åáì %s"
+        Push "  Ã‡Ã“ÃŠÃÃ‘Ã‡ÃŒ : %s"
+        Push "  Ã‡Ã“ÃŠÃÃ‘Ã‡ÃŒ Ã£ÃŒÃ¡ÃÃ‡ÃŠ Ã¦ Ã£Ã¡ÃÃ‡ÃŠ %d"
+        Push "Ã‡Ã“ÃŠÃÃ‘Ã‡ÃŒ Ã£ÃÃŠÃ¦Ã­Ã‡ÃŠ %s Ã…Ã¡Ã¬ %s"
       !else
-        Push "Çáãáİ ÛíÑ ãæÌæÏ İí ÇáÓÌá."
-        Push "ÎØÇÁ: Çáãáİ ÛíÑ ãæÌæÏ İí ÇáÓÌá."
-        Push "ÇÓÊÎÑÇÌ Çáãáİ %s ãä %s Åáì %s"
+        Push "Ã‡Ã¡Ã£Ã¡Ã Ã›Ã­Ã‘ Ã£Ã¦ÃŒÃ¦Ã ÃÃ­ Ã‡Ã¡Ã“ÃŒÃ¡."
+        Push "ÃÃ˜Ã‡Ã: Ã‡Ã¡Ã£Ã¡Ã Ã›Ã­Ã‘ Ã£Ã¦ÃŒÃ¦Ã ÃÃ­ Ã‡Ã¡Ã“ÃŒÃ¡."
+        Push "Ã‡Ã“ÃŠÃÃ‘Ã‡ÃŒ Ã‡Ã¡Ã£Ã¡Ã %s Ã£Ã¤ %s Ã…Ã¡Ã¬ %s"
       !endif
 
       Push "/TRANSLATE"
@@ -361,8 +361,8 @@
     StrCmp $LANGUAGE ${LANG_DANISH} 0 +10
 
       Push "  Fejl: %s"
-      Push "Kunne ikke læse fil attributter."
-      Push "Fejl: Kunne ikke læse fil attributter."
+      Push "Kunne ikke lÃ¦se fil attributter."
+      Push "Fejl: Kunne ikke lÃ¦se fil attributter."
       Push "Kunne ikke udpakke %s"
       Push "  Fejl: Kunne ikke udpakke %s"
 
@@ -384,19 +384,19 @@
 
     StrCmp $LANGUAGE ${LANG_CROATIAN} 0 +10
 
-      Push "  Greška: %s"
+      Push "  GreÅ¡ka: %s"
       Push "Ne mogu dohvatiti atribute datoteke."
-      Push "Greška: Ne mogu dohvatiti atribute datoteke."
+      Push "GreÅ¡ka: Ne mogu dohvatiti atribute datoteke."
       Push "Ne mogu ekstrahirati %s"
-      Push "  Greška: Ne mogu ekstrahirati %s"
+      Push "  GreÅ¡ka: Ne mogu ekstrahirati %s"
 
       !ifdef FILE_<ALL>
         Push "  Ekstrakcija: %s"
         Push "  Ekstrakcija %d datoteka i mapa"
-        Push "Ekstrakcija sadraja %s u %s"
+        Push "Ekstrakcija sadrÅ¾aja %s u %s"
       !else
-        Push "Traena datoteka ne postoji u arhivi."
-        Push "Greška: Traena datoteka ne postoji u arhivi."
+        Push "TraÅ¾ena datoteka ne postoji u arhivi."
+        Push "GreÅ¡ka: TraÅ¾ena datoteka ne postoji u arhivi."
         Push "Ekstrakcija datoteke %s iz %s u %s"
       !endif
 
