@@ -18,11 +18,13 @@ anyone. Everyone can also make changes to JES and share those changes.
 You can read the full license information in the `jes/help/JESCopyright.txt`
 file.
 
+[download]: https://github.com/jschoeny/jes-dark-qol/releases
+-[DOWNLOADS][download]-
 
 Running JES
 -----------
 The easiest way to run JES is with a downloadable package,
-which you can find at <https://github.com/gatech-csl/jes/releases>.
+which you can find [here][download].
 Each of them includes its own `JESReadme.txt` with instructions.
 
 If you're working on JES, or you just want to run the latest development
@@ -109,4 +111,3 @@ The `demos` folder contains programs you can run to try out JES.
 
 The `working-on-jes` folder contains articles written by the JES developers
 about how JES works, and how you can even contribute to it!
-
