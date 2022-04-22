@@ -169,3 +169,11 @@ You can define the `signing.key` property in `build.properties`, as well as
 `signing.keystore` to use a different keystore, and `signing.storepass` and
 `signing.keypass` to avoid needing to enter the passwords on each build.
 
+MacOS - Things to know
+----------------------
+A fix for getting JES working properly on macOS Catalina (and after) was to
+compile the `jes-launcher.sh` file using `shc`, a Generic Shell Script Compiler.
+If the `jes-launcher.sh` file is ever changed, make sure to re-compile it as a
+binary using `shc` on a Mac.
+
+Usage: `shc -f jes-launcher.sh`

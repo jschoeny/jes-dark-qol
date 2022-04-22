@@ -356,7 +356,7 @@
             copyright="${jes.copyright}"
             icon="${jes.home}/images/JESi2.icns"
             signature="JESX"
-            stubfile="${jes.release.macosx.resources}/jes-launcher.sh"
+            stubfile="${jes.release.macosx.resources}/jes-launcher.sh.x"
             jvmversion="${jes.target-java}+"
             verbose="true">
 
@@ -390,24 +390,31 @@
               tofile="${jes.release.macosx.stage}/JES Copyright.txt"
                />
 
+       <!-- <copy file="${jes.release.macosx.resources}/jes.sh" todir="${jes.release.macosx.stage}" />
+       <chmod file="${jes.release.macosx.stage}/jes.sh" perm="755" /> -->
+
         <!-- Zip it all up -->
         <zip destfile="${jes.release.macosx.zipfile}">
             <zipfileset  dir="${jes.release.macosx.stage}" >
                 <include name="JES.app/**/*" />
                 <include name="JES Information.txt" />
                 <include name="JES Copyright.txt" />
-                <exclude name="JES.app/Contents/MacOS/jes-launcher.sh" />
+                <exclude name="JES.app/Contents/MacOS/jes-launcher.*" />
             </zipfileset>
 
-         <zipfileset dir="${basedir}/demos" prefix="/Demos">
+            <zipfileset dir="${basedir}/demos" prefix="/Demos">
                 <include name="**/*" />
                 <exclude name="**/*.pybak" />
                 <exclude name="**/*.pylog" />
                 <exclude name="**/*$py.class" />
             </zipfileset>
 
+            <!-- <zipfileset filemode="755" dir="${jes.release.macosx.stage}" >
+                <include name="jes.sh" />
+            </zipfileset> -->
+
             <zipfileset filemode="755" dir="${jes.release.macosx.stage}" >
-                <include name="JES.app/Contents/MacOS/jes-launcher.sh" />
+                <include name="JES.app/Contents/MacOS/jes-launcher.sh.x" />
             </zipfileset>
         </zip>
     </target>
