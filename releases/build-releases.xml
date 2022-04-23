@@ -390,6 +390,10 @@
               tofile="${jes.release.macosx.stage}/JES Copyright.txt"
                />
 
+       <copy file="${jes.release.macosx.resources}/jes-launcher.sh"
+             tofile="${jes.release.macosx.stage}/JES.app/Contents/MacOS/jes-launcher.sh"
+               />
+
        <!-- <copy file="${jes.release.macosx.resources}/jes.sh" todir="${jes.release.macosx.stage}" />
        <chmod file="${jes.release.macosx.stage}/jes.sh" perm="755" /> -->
 
@@ -415,6 +419,10 @@
 
             <zipfileset filemode="755" dir="${jes.release.macosx.stage}" >
                 <include name="JES.app/Contents/MacOS/jes-launcher.sh.x" />
+            </zipfileset>
+
+            <zipfileset filemode="755" dir="${jes.release.macosx.stage}" >
+                <include name="JES.app/Contents/MacOS/jes-launcher.sh" />
             </zipfileset>
         </zip>
     </target>
