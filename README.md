@@ -21,7 +21,7 @@ file.
 [download]: https://github.com/jschoeny/jes-dark-qol/releases
 [Downloads][download]
 ---------------------
-Latest version: 7.0b1 (beta)
+Latest version: 7.0b2 (beta)
 
 Running JES
 -----------
