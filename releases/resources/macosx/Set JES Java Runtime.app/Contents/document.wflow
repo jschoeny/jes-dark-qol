@@ -1195,7 +1195,7 @@ elif test -f "${dir}/bin/java"; then
 elif test -f "${dir}/java"; then
 	echo $(dirname "$1")
 else
-	osascript -e "tell application \"System Events\" to display dialog \"Error. Java runtime not found in:\n\n\t${dir}\n\nMake sure to select a directory in which the 'bin' folder is located.\n\" with title \"Java not found\" buttons {\"OK\"} default button 1"
+	osascript -e "tell me to display dialog \"Error. Java runtime not found in:\n\n\t${dir}\n\nMake sure you selected the correct folder.\n\" with title \"Java not found\" buttons {\"OK\"} default button 1 with icon caution"
 	exit 1
 fi</string>
 					<key>CheckedForUserDefaultShell</key>
@@ -1466,16 +1466,8 @@ fi</string>
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>function run(input, parameters) {	const result = "#!/bin/sh\n\nexport JES_JAVA_HOME=" + input
-	
-	var app = Application.currentApplication()
-	app.includeStandardAdditions = true
- 
-	var dialogText = "Changing JES Java runtime. This will only take a few seconds."
-	app.displayDialog(dialogText, {
-		buttons: ["OK"],
-		defaultButton: "OK",
-		givingUpAfter: 3})	return result;}</string>
+					<string>function run(input, parameters) {	const result = "#!/bin/sh\n\nexport JES_JAVA_HOME=" + input		var app = Application.currentApplication()	app.includeStandardAdditions = true		var dialogText = "Changing JES Java runtime. This will only take a few seconds."	app.displayDialog(dialogText, {
+		withTitle: "Updating",		buttons: ["OK"],		defaultButton: "OK",		givingUpAfter: 2.5,		withIcon: 1})			return result;}</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunJavaScript</string>
@@ -2925,7 +2917,7 @@ end run</string>
 					<true/>
 					<key>Types</key>
 					<array>
-						<string>com.apple.cocoa.string</string>
+						<string>com.apple.applescript.object</string>
 					</array>
 				</dict>
 				<key>AMRequiredResources</key>
@@ -3012,25 +3004,17 @@ end run</string>
 					<true/>
 					<key>Types</key>
 					<array>
-						<string>com.apple.cocoa.string</string>
+						<string>com.apple.applescript.object</string>
 					</array>
 				</dict>
 				<key>AMActionVersion</key>
-				<string>2.0.3</string>
+				<string>1.0</string>
 				<key>AMApplication</key>
 				<array>
 					<string>Automator</string>
 				</array>
 				<key>AMParameterProperties</key>
 				<dict>
-					<key>COMMAND_STRING</key>
-					<dict/>
-					<key>CheckedForUserDefaultShell</key>
-					<dict/>
-					<key>inputMethod</key>
-					<dict/>
-					<key>shell</key>
-					<dict/>
 					<key>source</key>
 					<dict/>
 				</dict>
@@ -3040,31 +3024,31 @@ end run</string>
 					<string>List</string>
 					<key>Types</key>
 					<array>
-						<string>com.apple.cocoa.string</string>
+						<string>com.apple.applescript.object</string>
 					</array>
 				</dict>
 				<key>ActionBundlePath</key>
-				<string>/System/Library/Automator/Run Shell Script.action</string>
+				<string>/System/Library/Automator/Run JavaScript.action</string>
 				<key>ActionName</key>
-				<string>Run Shell Script</string>
+				<string>Run JavaScript</string>
 				<key>ActionParameters</key>
 				<dict>
-					<key>COMMAND_STRING</key>
-					<string>dir=$1
-osascript -e "tell application \"System Events\" to display dialog \"JES has been set to use the following Java runtime:\n\n${dir}/bin/java\" with title \"JES Java Runtime Updated\" buttons {\"OK\"} default button 1"</string>
-					<key>CheckedForUserDefaultShell</key>
-					<true/>
-					<key>inputMethod</key>
-					<integer>1</integer>
-					<key>shell</key>
-					<string>/bin/bash</string>
 					<key>source</key>
-					<string></string>
+					<string>function run(input, parameters) {		var app = Application.currentApplication()
+	app.includeStandardAdditions = true
+	
+	var dialogText = "Success! JES has been set to use the following Java runtime:\n\n"
+		+ String(input) + "/bin/java"
+	app.displayDialog(dialogText, {
+		withTitle: "JES Java Runtime Updated",
+		buttons: ["OK"],
+		defaultButton: "OK",
+		withIcon: 1})	return input;}</string>
 				</dict>
 				<key>BundleIdentifier</key>
-				<string>com.apple.RunShellScript</string>
+				<string>com.apple.Automator.RunJavaScript</string>
 				<key>CFBundleVersion</key>
-				<string>2.0.3</string>
+				<string>1.0</string>
 				<key>CanShowSelectedItemsWhenRun</key>
 				<false/>
 				<key>CanShowWhenRun</key>
@@ -3074,21 +3058,18 @@ osascript -e "tell application \"System Events\" to display dialog \"JES has bee
 					<string>AMCategoryUtilities</string>
 				</array>
 				<key>Class Name</key>
-				<string>RunShellScriptAction</string>
+				<string>RunJavaScriptAction</string>
 				<key>InputUUID</key>
-				<string>3743C259-A479-4884-A5A6-F806E4695A43</string>
+				<string>8BE22319-672D-4572-B59D-DFE3C8EEE2AD</string>
 				<key>Keywords</key>
 				<array>
-					<string>Shell</string>
-					<string>Script</string>
-					<string>Command</string>
 					<string>Run</string>
-					<string>Unix</string>
+					<string>JavaScript</string>
 				</array>
 				<key>OutputUUID</key>
-				<string>C2AF8A66-B112-462B-B1CB-2F4FDE799338</string>
+				<string>E3381990-21D6-4B1A-B8AA-CE680961196B</string>
 				<key>UUID</key>
-				<string>D195721C-FA0D-48EA-9A8A-58D0FA979366</string>
+				<string>B7417072-2526-47FC-A522-E802E51CEA5E</string>
 				<key>UnlocalizedApplications</key>
 				<array>
 					<string>Automator</string>
@@ -3098,33 +3079,12 @@ osascript -e "tell application \"System Events\" to display dialog \"JES has bee
 					<key>0</key>
 					<dict>
 						<key>default value</key>
-						<integer>0</integer>
-						<key>name</key>
-						<string>inputMethod</string>
-						<key>required</key>
-						<string>0</string>
-						<key>type</key>
-						<string>0</string>
-						<key>uuid</key>
-						<string>0</string>
-					</dict>
-					<key>1</key>
-					<dict>
-						<key>default value</key>
-						<false/>
-						<key>name</key>
-						<string>CheckedForUserDefaultShell</string>
-						<key>required</key>
-						<string>0</string>
-						<key>type</key>
-						<string>0</string>
-						<key>uuid</key>
-						<string>1</string>
-					</dict>
-					<key>2</key>
-					<dict>
-						<key>default value</key>
-						<string></string>
+						<string>function run(input, parameters) {
+	
+	// Your script goes here
+
+	return input;
+}</string>
 						<key>name</key>
 						<string>source</string>
 						<key>required</key>
@@ -3132,41 +3092,17 @@ osascript -e "tell application \"System Events\" to display dialog \"JES has bee
 						<key>type</key>
 						<string>0</string>
 						<key>uuid</key>
-						<string>2</string>
-					</dict>
-					<key>3</key>
-					<dict>
-						<key>default value</key>
-						<string></string>
-						<key>name</key>
-						<string>COMMAND_STRING</string>
-						<key>required</key>
 						<string>0</string>
-						<key>type</key>
-						<string>0</string>
-						<key>uuid</key>
-						<string>3</string>
-					</dict>
-					<key>4</key>
-					<dict>
-						<key>default value</key>
-						<string>/bin/sh</string>
-						<key>name</key>
-						<string>shell</string>
-						<key>required</key>
-						<string>0</string>
-						<key>type</key>
-						<string>0</string>
-						<key>uuid</key>
-						<string>4</string>
 					</dict>
 				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>555.750000:3213.000000</string>
+				<string>555.750000:3276.000000</string>
 				<key>nibPath</key>
-				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
+				<string>/System/Library/Automator/Run JavaScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
 			<key>isViewVisible</key>
 			<integer>1</integer>
@@ -3174,138 +3110,138 @@ osascript -e "tell application \"System Events\" to display dialog \"JES has bee
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>05682616-956C-4965-A682-339C2550C456</key>
+		<key>19EDFC42-527D-48AC-A9BC-B92620356771</key>
 		<dict>
 			<key>from</key>
-			<string>1C04F4AD-DC72-4148-AB1C-5FF9C94C80D6 - 1C04F4AD-DC72-4148-AB1C-5FF9C94C80D6</string>
+			<string>670A1C09-55CC-444F-899C-483C2C674E2C - 670A1C09-55CC-444F-899C-483C2C674E2C</string>
 			<key>to</key>
-			<string>7C8527C5-9DE0-461B-86FF-53EE337A0FFE - 7C8527C5-9DE0-461B-86FF-53EE337A0FFE</string>
-		</dict>
-		<key>3DF5B0BA-8F39-4D68-926B-4ABDA8F40F0C</key>
-		<dict>
-			<key>from</key>
 			<string>AEB4EAAF-8FD8-45B1-ABA7-5C1A98A77CEA - AEB4EAAF-8FD8-45B1-ABA7-5C1A98A77CEA</string>
-			<key>to</key>
-			<string>B8D14CEB-E43C-4F03-A9D3-A3ABBD220916 - B8D14CEB-E43C-4F03-A9D3-A3ABBD220916</string>
 		</dict>
-		<key>41740220-131A-46F8-B981-718623F6692E</key>
+		<key>2DF27656-7E93-4D6B-8709-2E69A23AAD6F</key>
 		<dict>
 			<key>from</key>
 			<string>2D171DA9-808E-4E07-927A-738E3A585EDA - 2D171DA9-808E-4E07-927A-738E3A585EDA</string>
 			<key>to</key>
 			<string>16C7E21C-C45C-415D-81BF-BB8C47821482 - 16C7E21C-C45C-415D-81BF-BB8C47821482</string>
 		</dict>
-		<key>431DB8E1-AFB9-4EA7-A85E-0B4F244EAF74</key>
-		<dict>
-			<key>from</key>
-			<string>7C8527C5-9DE0-461B-86FF-53EE337A0FFE - 7C8527C5-9DE0-461B-86FF-53EE337A0FFE</string>
-			<key>to</key>
-			<string>AB989C54-4CF7-40B8-B186-23D518F168A0 - AB989C54-4CF7-40B8-B186-23D518F168A0</string>
-		</dict>
-		<key>54ED1CA6-7765-4739-A277-BC160DC6D1FE</key>
-		<dict>
-			<key>from</key>
-			<string>53D3F92F-EE11-4A0F-B338-EDEBE6A5C57F - 53D3F92F-EE11-4A0F-B338-EDEBE6A5C57F</string>
-			<key>to</key>
-			<string>1C3BFFD6-383A-4BD1-BA98-7D60F405A543 - 1C3BFFD6-383A-4BD1-BA98-7D60F405A543</string>
-		</dict>
-		<key>646DAEA6-363D-4D2B-AAE9-65543D871E26</key>
-		<dict>
-			<key>from</key>
-			<string>4C6BDFF5-4516-4BB8-A27E-ECD522F7BDEF - 4C6BDFF5-4516-4BB8-A27E-ECD522F7BDEF</string>
-			<key>to</key>
-			<string>1E1462B6-911E-48E1-A62C-79B370C8331B - 1E1462B6-911E-48E1-A62C-79B370C8331B</string>
-		</dict>
-		<key>6B6EC8E5-70B6-433C-A4B6-51AE8274450F</key>
-		<dict>
-			<key>from</key>
-			<string>1E1462B6-911E-48E1-A62C-79B370C8331B - 1E1462B6-911E-48E1-A62C-79B370C8331B</string>
-			<key>to</key>
-			<string>D195721C-FA0D-48EA-9A8A-58D0FA979366 - D195721C-FA0D-48EA-9A8A-58D0FA979366</string>
-		</dict>
-		<key>6EDDB44D-8255-4895-AA9F-917A91A0CADD</key>
-		<dict>
-			<key>from</key>
-			<string>CBBAE96E-98C5-431A-B2FF-03425196E600 - CBBAE96E-98C5-431A-B2FF-03425196E600</string>
-			<key>to</key>
-			<string>41F22AD7-D371-4FA2-B72E-A8EB61F46A78 - 41F22AD7-D371-4FA2-B72E-A8EB61F46A78</string>
-		</dict>
-		<key>6F4D330D-3801-4786-A1C8-F73C19F776A2</key>
-		<dict>
-			<key>from</key>
-			<string>41F22AD7-D371-4FA2-B72E-A8EB61F46A78 - 41F22AD7-D371-4FA2-B72E-A8EB61F46A78</string>
-			<key>to</key>
-			<string>F427031D-ED32-4170-8E81-6C0D17D701A3 - F427031D-ED32-4170-8E81-6C0D17D701A3</string>
-		</dict>
-		<key>99EE7C12-148B-4672-AABD-3742A759FD3E</key>
+		<key>4A0E0A0A-814F-452A-938B-54AE5012FBD5</key>
 		<dict>
 			<key>from</key>
 			<string>6B470A56-F78E-4E15-8C7C-541BD8EAEFAD - 6B470A56-F78E-4E15-8C7C-541BD8EAEFAD</string>
 			<key>to</key>
 			<string>1C04F4AD-DC72-4148-AB1C-5FF9C94C80D6 - 1C04F4AD-DC72-4148-AB1C-5FF9C94C80D6</string>
 		</dict>
-		<key>9E1DACCC-277E-4FEF-8E2E-C0BB296E1794</key>
+		<key>4EC04B81-3A5F-422C-8E28-8DAC9F26DAE2</key>
 		<dict>
 			<key>from</key>
-			<string>AB989C54-4CF7-40B8-B186-23D518F168A0 - AB989C54-4CF7-40B8-B186-23D518F168A0</string>
+			<string>CBBAE96E-98C5-431A-B2FF-03425196E600 - CBBAE96E-98C5-431A-B2FF-03425196E600</string>
 			<key>to</key>
-			<string>2E83B8D5-A749-427E-AB21-17DFD1681C00 - 2E83B8D5-A749-427E-AB21-17DFD1681C00</string>
+			<string>41F22AD7-D371-4FA2-B72E-A8EB61F46A78 - 41F22AD7-D371-4FA2-B72E-A8EB61F46A78</string>
 		</dict>
-		<key>9FDE2EAE-A5F5-4DD8-BA91-C48949087CE4</key>
-		<dict>
-			<key>from</key>
-			<string>168731B7-2FEA-453C-B73A-E3F0440933AB - 168731B7-2FEA-453C-B73A-E3F0440933AB</string>
-			<key>to</key>
-			<string>53D3F92F-EE11-4A0F-B338-EDEBE6A5C57F - 53D3F92F-EE11-4A0F-B338-EDEBE6A5C57F</string>
-		</dict>
-		<key>A1F9D5FF-361C-479F-8E37-94C63C15A708</key>
-		<dict>
-			<key>from</key>
-			<string>16C7E21C-C45C-415D-81BF-BB8C47821482 - 16C7E21C-C45C-415D-81BF-BB8C47821482</string>
-			<key>to</key>
-			<string>168731B7-2FEA-453C-B73A-E3F0440933AB - 168731B7-2FEA-453C-B73A-E3F0440933AB</string>
-		</dict>
-		<key>A3F99D50-E037-4AB4-8B5D-7770398B1076</key>
-		<dict>
-			<key>from</key>
-			<string>F427031D-ED32-4170-8E81-6C0D17D701A3 - F427031D-ED32-4170-8E81-6C0D17D701A3</string>
-			<key>to</key>
-			<string>6B470A56-F78E-4E15-8C7C-541BD8EAEFAD - 6B470A56-F78E-4E15-8C7C-541BD8EAEFAD</string>
-		</dict>
-		<key>A994D001-C544-491F-A25B-6212AD99CCB8</key>
+		<key>6C1FA395-379A-4DF4-8812-8B7DD3957AFD</key>
 		<dict>
 			<key>from</key>
 			<string>F7705DEC-4855-4107-A3C6-C6BBF7B761E6 - F7705DEC-4855-4107-A3C6-C6BBF7B761E6</string>
 			<key>to</key>
 			<string>2D171DA9-808E-4E07-927A-738E3A585EDA - 2D171DA9-808E-4E07-927A-738E3A585EDA</string>
 		</dict>
-		<key>CED3A054-5331-49A6-9B03-3C056B228B9B</key>
+		<key>75D557D9-89F6-4683-B6C9-629759A8A8F4</key>
+		<dict>
+			<key>from</key>
+			<string>168731B7-2FEA-453C-B73A-E3F0440933AB - 168731B7-2FEA-453C-B73A-E3F0440933AB</string>
+			<key>to</key>
+			<string>53D3F92F-EE11-4A0F-B338-EDEBE6A5C57F - 53D3F92F-EE11-4A0F-B338-EDEBE6A5C57F</string>
+		</dict>
+		<key>814E8787-491B-4FF1-B067-C5F06A07CF9D</key>
+		<dict>
+			<key>from</key>
+			<string>AEB4EAAF-8FD8-45B1-ABA7-5C1A98A77CEA - AEB4EAAF-8FD8-45B1-ABA7-5C1A98A77CEA</string>
+			<key>to</key>
+			<string>B8D14CEB-E43C-4F03-A9D3-A3ABBD220916 - B8D14CEB-E43C-4F03-A9D3-A3ABBD220916</string>
+		</dict>
+		<key>98A6BD99-A84A-47C9-8C02-2E3606F0A9B7</key>
+		<dict>
+			<key>from</key>
+			<string>4C6BDFF5-4516-4BB8-A27E-ECD522F7BDEF - 4C6BDFF5-4516-4BB8-A27E-ECD522F7BDEF</string>
+			<key>to</key>
+			<string>1E1462B6-911E-48E1-A62C-79B370C8331B - 1E1462B6-911E-48E1-A62C-79B370C8331B</string>
+		</dict>
+		<key>9D5C7E8F-9057-4618-9428-A485D0DA6483</key>
 		<dict>
 			<key>from</key>
 			<string>B8D14CEB-E43C-4F03-A9D3-A3ABBD220916 - B8D14CEB-E43C-4F03-A9D3-A3ABBD220916</string>
 			<key>to</key>
 			<string>CBBAE96E-98C5-431A-B2FF-03425196E600 - CBBAE96E-98C5-431A-B2FF-03425196E600</string>
 		</dict>
-		<key>D5C026C1-42DA-4A87-890B-30FD0F015E61</key>
+		<key>A6762813-4295-4580-BBD9-9F5171F2E004</key>
+		<dict>
+			<key>from</key>
+			<string>2E83B8D5-A749-427E-AB21-17DFD1681C00 - 2E83B8D5-A749-427E-AB21-17DFD1681C00</string>
+			<key>to</key>
+			<string>4C6BDFF5-4516-4BB8-A27E-ECD522F7BDEF - 4C6BDFF5-4516-4BB8-A27E-ECD522F7BDEF</string>
+		</dict>
+		<key>AF76910F-D66C-403D-A77E-EF06A1184D2B</key>
+		<dict>
+			<key>from</key>
+			<string>53D3F92F-EE11-4A0F-B338-EDEBE6A5C57F - 53D3F92F-EE11-4A0F-B338-EDEBE6A5C57F</string>
+			<key>to</key>
+			<string>1C3BFFD6-383A-4BD1-BA98-7D60F405A543 - 1C3BFFD6-383A-4BD1-BA98-7D60F405A543</string>
+		</dict>
+		<key>AF81FFA9-F295-4252-9678-6DAFC9C0F82F</key>
+		<dict>
+			<key>from</key>
+			<string>1C04F4AD-DC72-4148-AB1C-5FF9C94C80D6 - 1C04F4AD-DC72-4148-AB1C-5FF9C94C80D6</string>
+			<key>to</key>
+			<string>7C8527C5-9DE0-461B-86FF-53EE337A0FFE - 7C8527C5-9DE0-461B-86FF-53EE337A0FFE</string>
+		</dict>
+		<key>AF9EDB81-7F93-4187-B3B4-3DD1FCB8318B</key>
+		<dict>
+			<key>from</key>
+			<string>F427031D-ED32-4170-8E81-6C0D17D701A3 - F427031D-ED32-4170-8E81-6C0D17D701A3</string>
+			<key>to</key>
+			<string>6B470A56-F78E-4E15-8C7C-541BD8EAEFAD - 6B470A56-F78E-4E15-8C7C-541BD8EAEFAD</string>
+		</dict>
+		<key>B9AB6CB8-4476-41AF-AAE5-B7780BCCEA40</key>
+		<dict>
+			<key>from</key>
+			<string>1E1462B6-911E-48E1-A62C-79B370C8331B - 1E1462B6-911E-48E1-A62C-79B370C8331B</string>
+			<key>to</key>
+			<string>B7417072-2526-47FC-A522-E802E51CEA5E - B7417072-2526-47FC-A522-E802E51CEA5E</string>
+		</dict>
+		<key>E1E15DEF-0D3B-4073-A754-324064E5A31E</key>
+		<dict>
+			<key>from</key>
+			<string>41F22AD7-D371-4FA2-B72E-A8EB61F46A78 - 41F22AD7-D371-4FA2-B72E-A8EB61F46A78</string>
+			<key>to</key>
+			<string>F427031D-ED32-4170-8E81-6C0D17D701A3 - F427031D-ED32-4170-8E81-6C0D17D701A3</string>
+		</dict>
+		<key>E37ECE1B-357A-4015-8BD7-88D8FC2DE091</key>
+		<dict>
+			<key>from</key>
+			<string>AB989C54-4CF7-40B8-B186-23D518F168A0 - AB989C54-4CF7-40B8-B186-23D518F168A0</string>
+			<key>to</key>
+			<string>2E83B8D5-A749-427E-AB21-17DFD1681C00 - 2E83B8D5-A749-427E-AB21-17DFD1681C00</string>
+		</dict>
+		<key>EFC61FC1-71B1-48E4-91D4-AE8BE4DB6A5B</key>
+		<dict>
+			<key>from</key>
+			<string>7C8527C5-9DE0-461B-86FF-53EE337A0FFE - 7C8527C5-9DE0-461B-86FF-53EE337A0FFE</string>
+			<key>to</key>
+			<string>AB989C54-4CF7-40B8-B186-23D518F168A0 - AB989C54-4CF7-40B8-B186-23D518F168A0</string>
+		</dict>
+		<key>F0250C1F-1F66-42E3-B47A-0E14D1C10297</key>
 		<dict>
 			<key>from</key>
 			<string>1C3BFFD6-383A-4BD1-BA98-7D60F405A543 - 1C3BFFD6-383A-4BD1-BA98-7D60F405A543</string>
 			<key>to</key>
 			<string>670A1C09-55CC-444F-899C-483C2C674E2C - 670A1C09-55CC-444F-899C-483C2C674E2C</string>
 		</dict>
-		<key>D97A6571-2900-493C-8C53-7742A97E372B</key>
+		<key>FCC45AE8-6C3B-4A92-B5C8-B17B37A7B69E</key>
 		<dict>
 			<key>from</key>
-			<string>670A1C09-55CC-444F-899C-483C2C674E2C - 670A1C09-55CC-444F-899C-483C2C674E2C</string>
+			<string>16C7E21C-C45C-415D-81BF-BB8C47821482 - 16C7E21C-C45C-415D-81BF-BB8C47821482</string>
 			<key>to</key>
-			<string>AEB4EAAF-8FD8-45B1-ABA7-5C1A98A77CEA - AEB4EAAF-8FD8-45B1-ABA7-5C1A98A77CEA</string>
-		</dict>
-		<key>EC3F83F3-7145-48F6-9553-FC1348799B66</key>
-		<dict>
-			<key>from</key>
-			<string>2E83B8D5-A749-427E-AB21-17DFD1681C00 - 2E83B8D5-A749-427E-AB21-17DFD1681C00</string>
-			<key>to</key>
-			<string>4C6BDFF5-4516-4BB8-A27E-ECD522F7BDEF - 4C6BDFF5-4516-4BB8-A27E-ECD522F7BDEF</string>
+			<string>168731B7-2FEA-453C-B73A-E3F0440933AB - 168731B7-2FEA-453C-B73A-E3F0440933AB</string>
 		</dict>
 	</dict>
 	<key>variables</key>
